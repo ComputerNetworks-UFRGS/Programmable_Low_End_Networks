@@ -1,0 +1,150 @@
+#!/usr/bin/env python3
+
+""" An asynchronous socket <-> LoRa interface """
+
+# MIT License
+#
+# Copyright (c) 2016 bjcarne
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+import sys, asyncore, socket, threading
+from time import time, sleep
+from SX127x.LoRa import *
+from SX127x.board_config import BOARD
+
+BOARD.setup()
+
+class Client(threading.Thread):
+    def __init__(self, host, port):
+        threading.Thread.__init__(self)
+        self.host = host
+        self.port = port
+        self.sock = socket.socket()
+
+    def run(self):
+        connected = False
+        while not connected:
+            try:
+                self.sock.connect((self.host, self.port))
+                connected = True
+            except ConnectionRefusedError:
+                print("Connection refused. Retrying in 1 second...")
+                sleep(1)
+                continue
+
+        print("Connected to server at {}:{}".format(self.host, self.port))
+        
+        while True:
+            message = input('>> ')
+            if message == 'quit':
+                break
+            self.sock.send(bytearray(message,'utf-8'))
+            #data = bytearray(self.sock.recv(1024)).decode('ascii')
+            #print('From LoRa: ' + data)
+        self.sock.close()
+            
+class Server(threading.Thread):
+    def __init__(self, host, port):
+        threading.Thread.__init__(self)
+        self.host = host
+        self.port = port
+
+    def run(self):
+        server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_sock.bind((self.host, self.port))
+        server_sock.listen(5)
+        print("Server started on {}:{}".format(self.host, self.port))
+        while True:
+            client_sock, addr = server_sock.accept()
+            print("Connection from {}:{}".format(addr[0], addr[1]))
+            handler = Handler(client_sock)
+            handler.start()
+
+class Handler(threading.Thread):
+    def __init__(self, sock):
+        threading.Thread.__init__(self)
+        self.sock = sock
+
+    def run(self):
+        while True:
+            data = self.sock.recv(1024)
+            if not data:
+                print("Client disconnected")
+                break
+            message = data.decode('utf-8')
+            print('Received:', message)
+            if message == 'quit':
+                break
+        self.sock.close()
+
+    def send_data(self, data):
+        self.sock.send(data)
+
+class LoRaSocket(LoRa):
+    def __init__(self, server_handler, verbose=False):
+        super(LoRaSocket, self).__init__(verbose)
+        self.server_handler = server_handler
+        self.set_mode(MODE.SLEEP)
+        self.set_pa_config(pa_select=1)
+        self.set_max_payload_length(128) # set max payload to max fifo buffer length
+        self.payload = []
+        self.set_dio_mapping([0] * 6) #initialise DIO0 for rxdone  
+
+    def on_rx_done(self):
+        payload = self.read_payload(nocheck=True)
+        if len(payload) == 127:
+            self.payload.extend(payload)
+        else:
+            self.payload.extend(payload)
+            print('Recv:', bytes(self.payload))
+            self.server_handler.send_data(bytes(self.payload))
+            self.payload.clear()
+        self.clear_irq_flags(RxDone=1)
+        self.reset_ptr_rx()
+        self.set_mode(MODE.RXCONT)
+
+    def on_tx_done(self):
+        self.clear_irq_flags(TxDone=1)
+        self.set_dio_mapping([0] * 6)    
+        self.set_mode(MODE.RXCONT)
+
+if __name__ == '__main__':
+    server = Server('143.54.50.38', 20001)
+    lora = LoRaSocket(server_handler=None, verbose=False)
+    client = Client('143.54.48.147', 20000)
+
+    print(lora)
+
+    try:
+        server.start()
+        client.start()
+        server.join()
+        client.join()
+        while True:
+            asyncore.loop(timeout=1, count=1)
+    except KeyboardInterrupt:
+        sys.stderr.write("\nKeyboardInterrupt\n")
+    finally:
+        lora.set_mode(MODE.SLEEP)
+        print("Closing socket connection")
+        sys.exit()
+        BOARD.teardown()
