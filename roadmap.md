@@ -10,7 +10,7 @@ _The image above describes the structure of the prototype we are building._
 To build the network described above, we have to develop 2 important parts:
 
 1. The communication through the [BMV2 software switch](https://github.com/p4lang/behavioral-model) using [P4](https://github.com/p4lang) on the [P4Pi OS](https://github.com/p4lang/p4pi).
-2. The [LoRa SX127x](https://www.dragino.com/products/lora/item/106-lora-gps-hat.html) antennas communication using [Scappy](https://scapy.net/) and some LoRa base codes.
+2. The [LoRa SX127x](https://www.dragino.com/products/lora/item/106-lora-gps-hat.html) antennas communication using [scapy](https://scapy.net/) and some LoRa base codes.
 
 The idea is that the communication with the network will occur passing through the programmable switch, and then, through the LoRa Radio transmissions, giving us the power to communicate over long distances. The speed of the radio link will be slow (something along the line of 400bps to 50Kbps), however, it will be enough to demonstrate the idea and make some experiments.
 <br/>
@@ -25,7 +25,7 @@ We developed these parts separately, and so, now we have to merge these two tech
 - [X] Learning and understanding P4
 - [X] Learning how to use P4Pi OS to run P4 and how to configure virtual networks
 - [X] Learning how to use LoRa technologies for our purposes
-- [X] Learning Scappy for packet processing
+- [X] Learning scapy for packet processing
 - [X] Building a simulation without the LoRa communication
       
 ### merging projects
@@ -51,7 +51,7 @@ We developed these parts separately, and so, now we have to merge these two tech
 ### Ongoing tasks
 - [ ] Figure out how to integrate LoRa Communication and P4Pi OS
     - probably using a dummy interface to receive and send packet from and to LoRa
-- [ ] Rebuild sniffer script with scappy
+- [ ] Rebuild sniffer script with scapy
 - [ ] Rebuild sendp function to send packets to dummy interface
 
 ## Project Decisions
