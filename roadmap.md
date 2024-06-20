@@ -12,10 +12,10 @@ To build the network described above, we have to develop 2 important parts:
 1. The communication through the [BMV2 software switch](https://github.com/p4lang/behavioral-model) using [P4](https://github.com/p4lang) on the [P4Pi OS](https://github.com/p4lang/p4pi).
 2. The [LoRa SX127x](https://www.dragino.com/products/lora/item/106-lora-gps-hat.html) antennas communication using [Scappy](https://scapy.net/) and some LoRa base codes.
 
-The ideia is that the communication with the network will occur passing through the programmable switch, and then, through the LoRa Radio transmissions, giving us the power to communicate over long distances. The speed of the radio link will be slow (something along the line of 400bps to 50Kbps), however, it will be enough to demonstrate the ideia and make some experiments.
+The idea is that the communication with the network will occur passing through the programmable switch, and then, through the LoRa Radio transmissions, giving us the power to communicate over long distances. The speed of the radio link will be slow (something along the line of 400bps to 50Kbps), however, it will be enough to demonstrate the idea and make some experiments.
 <br/>
 
-We developed these parts separately, and so, now we have to merge this two technologies together.
+We developed these parts separately, and so, now we have to merge these two technologies together.
 
 <br/>
 
@@ -23,7 +23,7 @@ We developed these parts separately, and so, now we have to merge this two techn
 
 ### tasks finished
 - [X] Learning and understanding P4
-- [X] Learning how to use P4Pi OS to run P4 and how to configurate virtual networks
+- [X] Learning how to use P4Pi OS to run P4 and how to configure virtual networks
 - [X] Learning how to use LoRa technologies for our purposes
 - [X] Learning Scappy for packet processing
 - [X] Building a simulation without the LoRa communication
