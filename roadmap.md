@@ -3,7 +3,7 @@
 In this document, we aim to explain what is the prototype we are developing; the tasks we already made and the ones that are to come.
 
 ![prototype](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/assets/103913045/d92c94cd-479a-4a5c-883f-a585edb2414b)
-_The image above describes the structure of the end prototype we aim to build._
+_The image above describes the structure of the prototype we are building._
 
 <br/>
 
