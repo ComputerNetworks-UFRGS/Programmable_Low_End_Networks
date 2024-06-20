@@ -1,5 +1,33 @@
-# Steps to finish prototype
+# Pilot Project [Prototype]
 
+In this document, we aim to explain what is the prototype we are developing; the tasks we already made and the ones that are to come.
+
+![prototype](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/assets/103913045/d92c94cd-479a-4a5c-883f-a585edb2414b)
+_The image above describes the structure of the end prototype we aim to build._
+
+<br/>
+
+To build the network described above, we have to develop 2 important parts:
+
+1. The communication through the [BMV2 software switch](https://github.com/p4lang/behavioral-model) using [P4](https://github.com/p4lang) on the [P4Pi OS](https://github.com/p4lang/p4pi).
+2. The [LoRa SX127x](https://www.dragino.com/products/lora/item/106-lora-gps-hat.html) antennas communication using [Scappy](https://scapy.net/) and some LoRa base codes.
+
+The ideia is that the communication with the network will occur passing through the programmable switch, and then, through the LoRa Radio transmissions, giving us the power to communicate over long distances. The speed of the radio link will be slow (something along the line of 400bps to 50Kbps), however, it will be enough to demonstrate the ideia and make some experiments.
+<br/>
+
+We developed these parts separately, and so, now we have to merge this two technologies together.
+
+<br/>
+
+## Steps to build the prototype
+
+### tasks finished
+- [X] Learning and understanding P4
+- [X] Learning how to use P4Pi OS to run P4 and how to configurate virtual networks
+- [X] Learning how to use LoRa technologies for our purposes
+- [X] Learning Scappy for packet processing
+- [X] Building a simulation without the LoRa communication
+      
 ### merging projects
 - [X] configure GPIO pins for LoRa
 - [X] configure SPI on Raspberry Pi
@@ -20,12 +48,11 @@
     7. Try and run sudo ./lora_util.py
         1. Assertion Error: Try and reboot the raspberry
 
-### Steps to finish prototype
+### Ongoing tasks
 - [ ] Figure out how to integrate LoRa Communication and P4Pi OS
     - probably using a dummy interface to receive and send packet from and to LoRa
 - [ ] Rebuild sniffer script with scappy
 - [ ] Rebuild sendp function to send packets to dummy interface
 
 ## Project Decisions
-
-- [ ] Not implementing DHCP server on local network for brevity
+- Not implementing DHCP server on local network for ease of development
