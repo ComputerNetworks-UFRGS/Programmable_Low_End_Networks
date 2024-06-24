@@ -58,7 +58,7 @@ We developed these parts separately, and so, now we have to merge these two tech
 - Not implementing DHCP server on local network for ease of development
 
 ## Tasks for automating prototype execution (P4 side)
-- [] Connect to wifi (Julien)
-- [] ssh to p4pi (Julien)
-- [] run the P4 code and check if it works (Marcelo)
-- [] check internet connection (Marcelo)
+- [ ] Connect to wifi (Julien)
+- [ ] ssh to p4pi (Julien)
+- [ ] run the P4 code and check if it works (Marcelo)
+- [ ] check internet connection (Marcelo)
