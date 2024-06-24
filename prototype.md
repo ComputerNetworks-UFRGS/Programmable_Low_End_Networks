@@ -15,3 +15,6 @@
     2. Run setup_eth_wlan_bridge
 
 ## LoRa configurations
+    1. Configure GPIO pins and SPI
+    2. Copy the transceiver script
+    3. Run the transceiver script on both ends
