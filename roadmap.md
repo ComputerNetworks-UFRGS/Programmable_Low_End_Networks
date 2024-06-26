@@ -45,18 +45,18 @@ We developed these parts separately, and so, now we have to merge these two tech
 - Not implementing DHCP server on local network for ease of development
 
 ## Ongoing tasks
-- [X] Figure out how to integrate LoRa Communication and P4Pi OS
+- [ ] Figure out best way to integrate LoRa Communication and P4Pi OS - DOING
     - usage of dummy interfaces
     - switch with 3 ports (one to communicate with clients, one to send to LoRa and one to receive from LoRa)
-- [ ] Build script to automate the P4 configuration of the P4Pi's included on the prototype
+- [ ] Build script to automate the P4 configuration of the P4Pi's included on the prototype - DOING
     - Connect to wifi (Julien) - DONE
     - ssh to p4pi (Julien) - DONE
     - run the P4 code and check if it works (Marcelo) - DOING
     - check internet connection (Marcelo) - DONE
 - [X] Rebuild sniffer script with scapy
     - sniffer for DHCP packets as test 
-- [ ] Decode packets received on the middle p4pi
-- [ ] Forward packets to the network
-- [ ] Analyse throughput of LoRa Antenas
-- [ ] Build filter for only client packets, ignoring other packets on the sniffers
+- [ ] Decode packets received on the middle p4pi - DOING
+- [ ] Forward packets to the network - TO DO
+- [ ] Analyse throughput of LoRa Antenas[] - TO DO
+- [ ] Build filter for only client packets, ignoring other packets on the sniffers - TO DO
 
