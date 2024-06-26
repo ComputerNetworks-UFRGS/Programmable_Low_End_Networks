@@ -19,14 +19,7 @@ We developed these parts separately, and so, now we have to merge these two tech
 
 <br/>
 
-## Steps to build the prototype
-
-### tasks finished
-- [X] Learning and understanding P4
-- [X] Learning how to use P4Pi OS to run P4 and how to configure virtual networks
-- [X] Learning how to use LoRa technologies for our purposes
-- [X] Learning scapy for packet processing
-- [X] Building a simulation without the LoRa communication
+## Steps to integrate project parts
       
 ### merging projects
 - [X] configure GPIO pins for LoRa
@@ -48,17 +41,22 @@ We developed these parts separately, and so, now we have to merge these two tech
     7. Try and run sudo ./lora_util.py
         1. Assertion Error: Try and reboot the raspberry
 
-### Ongoing tasks
-- [ ] Figure out how to integrate LoRa Communication and P4Pi OS
-    - probably using a dummy interface to receive and send packet from and to LoRa
-- [ ] Rebuild sniffer script with scapy
-- [ ] Rebuild sendp function to send packets to dummy interface
-
 ## Project Decisions
 - Not implementing DHCP server on local network for ease of development
 
-## Tasks for automating prototype execution (P4 side)
-- [X] Connect to wifi (Julien)
-- [X] ssh to p4pi (Julien)
-- [ ] run the P4 code and check if it works (Marcelo)
-- [X] check internet connection (Marcelo)
+## Ongoing tasks
+- [X] Figure out how to integrate LoRa Communication and P4Pi OS
+    - usage of dummy interfaces
+    - switch with 3 ports (one to communicate with clients, one to send to LoRa and one to receive from LoRa)
+- [ ] Build script to automate the P4 configuration of the P4Pi's included on the prototype
+    - Connect to wifi (Julien) - DONE
+    - ssh to p4pi (Julien) - DONE
+    - run the P4 code and check if it works (Marcelo) - DOING
+    - check internet connection (Marcelo) - DONE
+- [X] Rebuild sniffer script with scapy
+    - sniffer for DHCP packets as test 
+- [ ] Decode packets received on the middle p4pi
+- [ ] Forward packets to the network
+- [ ] Analyse throughput of LoRa Antenas
+- [ ] Build filter for only client packets, ignoring other packets on the sniffers
+
