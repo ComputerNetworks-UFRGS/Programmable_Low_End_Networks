@@ -163,6 +163,9 @@ if __name__ == '__main__':
     forward_if = args.forward
     verbose = args.verbose
     
+    if not verbose:
+        print("You are running on silent mode!")
+     
     handler = Handler()
     lora = LoRaSocket(verbose=verbose)
     # filter only DHCP packets: port 68 and port 67
@@ -181,4 +184,3 @@ if __name__ == '__main__':
     finally:
         lora.set_mode(MODE.SLEEP)
         BOARD.teardown()
-
