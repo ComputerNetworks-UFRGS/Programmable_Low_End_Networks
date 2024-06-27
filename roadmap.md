@@ -49,6 +49,7 @@ We developed these parts separately, and so, now we have to merge these two tech
     - usage of dummy interfaces
     - switch with 3 ports (one to communicate with clients, one to send to LoRa and one to receive from LoRa)
 - [ ] Build script to automate the P4 configuration of the P4Pi's included on the prototype - DOING
+- [ ] Build script to configure virtual network for switch with 3 ports
     - Connect to wifi (Julien) - DONE
     - ssh to p4pi (Julien) - DONE
     - run the P4 code and check if it works (Marcelo) - DOING
