@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# Create the main bridge
+brctl addbr br0
+check_error "Creating br0"
+brctl setageing br0 0
+check_error "Setting ageing time on br0"
+
+# Create network namespaces for LoRa send and receive
+ip netns add lorasend
+ip netns add lorarecv
+
+# Create the bridge inside the namespaces
+ip netns exec lorasend brctl addbr br1
+ip netns exec lorasend brctl setageing br1 0
+ip netns exec lorarecv brctl addbr br2
+ip netns exec lorarecv brctl setageing br2 0
+
+# Create veth pairs
+ip link add dev veth0 type veth peer name veth0-1  # Client communication
+ip link add dev veth1 type veth peer name veth1-1  # Send to LoRa
+ip link add dev veth2 type veth peer name veth2-1  # Receive from LoRa
+
+# Set MAC addresses for veth pairs (optional)
+ip link set dev veth0 address 10:04:00:00:00:00
+ip link set dev veth0-1 address 10:04:00:00:00:10
+ip link set dev veth1 address 10:04:00:00:10:00
+ip link set dev veth1-1 address 10:04:00:00:10:10
+ip link set dev veth2 address 10:04:00:10:00:00
+ip link set dev veth2-1 address 10:04:00:10:00:10
+
+# Bring up the veth interfaces
+ip link set dev veth0 up
+ip link set dev veth0-1 up
+ip link set dev veth1 up
+ip link set dev veth1-1 netns lorasend
+ip link set dev veth2 up
+ip link set dev veth2-1 netns lorarecv
+ip netns exec lorasend ip link set dev veth1-1 up
+ip netns exec lorarecv ip link set dev veth2-1 up
+
+# Disable offloading
+ethtool -K veth0 tx off
+ethtool -K veth0-1 tx off
+ethtool -K veth1 tx off
+ip netns exec lorasend ethtool -K veth1-1 tx off
+ethtool -K veth2 tx off
+ip netns exec lorarecv ethtool -K veth2-1 tx off
+
+# Add interfaces to the bridges
+brctl addif br0 veth0-1
+ip netns exec lorasend brctl addif br1 veth1-1
+ip netns exec lorarecv brctl addif br2 veth2-1
+
+# Bring up the bridges
+ip link set dev br0 up
+ip netns exec lorasend ip link set dev br1 up
+ip netns exec lorarecv ip link set dev br2 up
+
+# Bring up loopback interfaces in namespaces
+ip netns exec lorasend ip link set lo up
+ip netns exec lorarecv ip link set lo up
+
+echo "Virtual switch with 3 ports configured successfully."

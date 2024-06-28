@@ -1,0 +1,106 @@
+#!/bin/bash
+
+brctl addbr br0
+ip netns add gigport
+
+ip netns exec gigport brctl addbr br1
+ip netns exec gigport brctl setageing br1 0
+
+brctl setageing br0 0
+
+ip link add dev veth0 type veth peer name veth0-1
+ip link add dev veth1 type veth peer name veth1-1
+
+ip link set dev veth0 address 10:04:00:00:00:00
+ip link set dev veth0-1 address 10:04:00:00:00:10
+ip link set dev veth1 address 10:04:00:00:10:00
+ip link set dev veth1-1 address 10:04:00:00:10:10
+
+ip link set dev veth0 up
+ip link set dev veth1 up
+
+ip link set dev veth0-1 up
+ip link set veth1-1 netns gigport
+ip netns exec gigport ip link set dev veth1-1 up
+ip netns exec gigport ethtool -K veth1-1 tx off
+
+ethtool -K veth0 tx off
+ethtool -K veth1 tx off
+
+ethtool -K veth0-1 tx off
+
+brctl addif br0 veth0-1
+ip netns exec gigport brctl addif br1 veth1-1
+ip netns exec gigport ip addr add 192.168.4.150/24 dev br1
+
+ip add 192.168.4.1 dev veth1
+ip link set dev veth0 up
+ip link set dev veth0-1 up
+ip link set dev veth1 up
+ip link set dev veth1-1 up
+
+
+
+
+# br0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+#         inet 192.168.4.1  netmask 255.255.255.0  broadcast 192.168.4.255
+#         inet6 fe80::da3a:ddff:fe88:c9ad  prefixlen 64  scopeid 0x20<link>
+#         ether 10:04:00:00:00:10  txqueuelen 1000  (Ethernet)
+#         RX packets 487  bytes 46369 (45.2 KiB)
+#         RX errors 0  dropped 0  overruns 0  frame 0
+#         TX packets 282  bytes 82086 (80.1 KiB)
+#         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+# eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+#         inet 143.54.50.179  netmask 255.255.252.0  broadcast 143.54.51.255
+#         inet6 fe80::da3a:ddff:fe88:c9ac  prefixlen 64  scopeid 0x20<link>
+#         ether d8:3a:dd:88:c9:ac  txqueuelen 1000  (Ethernet)
+#         RX packets 3414  bytes 596792 (582.8 KiB)
+#         RX errors 0  dropped 0  overruns 0  frame 0
+#         TX packets 194  bytes 17321 (16.9 KiB)
+#         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+# lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+#         inet 127.0.0.1  netmask 255.0.0.0
+#         inet6 ::1  prefixlen 128  scopeid 0x10<host>
+#         loop  txqueuelen 1000  (Local Loopback)
+#         RX packets 202  bytes 15289 (14.9 KiB)
+#         RX errors 0  dropped 0  overruns 0  frame 0
+#         TX packets 202  bytes 15289 (14.9 KiB)
+#         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+# veth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+#         inet 192.168.4.19  netmask 255.255.255.0  broadcast 192.168.4.255
+#         inet6 fe80::1204:ff:fe00:0  prefixlen 64  scopeid 0x20<link>
+#         ether 10:04:00:00:00:00  txqueuelen 1000  (Ethernet)
+#         RX packets 420  bytes 102114 (99.7 KiB)
+#         RX errors 0  dropped 0  overruns 0  frame 0
+#         TX packets 59  bytes 7782 (7.5 KiB)
+#         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+# veth1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+#         inet 169.254.135.70  netmask 255.255.0.0  broadcast 169.254.255.255
+#         inet6 fe80::1204:ff:fe00:1000  prefixlen 64  scopeid 0x20<link>
+#         ether 10:04:00:00:10:00  txqueuelen 1000  (Ethernet)
+#         RX packets 25  bytes 2030 (1.9 KiB)
+#         RX errors 0  dropped 0  overruns 0  frame 0
+#         TX packets 44  bytes 6872 (6.7 KiB)
+#         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+# veth0-1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+#         inet 169.254.150.98  netmask 255.255.0.0  broadcast 169.254.255.255
+#         inet6 fe80::1204:ff:fe00:10  prefixlen 64  scopeid 0x20<link>
+#         ether 10:04:00:00:00:10  txqueuelen 1000  (Ethernet)
+#         RX packets 59  bytes 7782 (7.5 KiB)
+#         RX errors 0  dropped 0  overruns 0  frame 0
+#         TX packets 420  bytes 102114 (99.7 KiB)
+#         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+# wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+#         inet 169.254.79.138  netmask 255.255.0.0  broadcast 169.254.255.255
+#         inet6 fe80::da3a:ddff:fe88:c9ad  prefixlen 64  scopeid 0x20<link>
+#         ether d8:3a:dd:88:c9:ad  txqueuelen 1000  (Ethernet)
+#         RX packets 432  bytes 39621 (38.6 KiB)
+#         RX errors 0  dropped 0  overruns 0  frame 0
+#         TX packets 402  bytes 107385 (104.8 KiB)
+#         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
