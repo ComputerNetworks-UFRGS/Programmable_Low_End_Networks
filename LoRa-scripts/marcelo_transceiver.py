@@ -138,7 +138,7 @@ class LoRaSocket(LoRa):
             #        handler.IPlist.append(packet[BOOTP].yiaddr)
 
             # sends packet to network
-            #sendp(packet, iface=forward_if)
+            #sendp(packet, iface=pktout)
 
         self.clear_irq_flags(RxDone=1) # clear rxdone IRQ flag
         self.reset_ptr_rx()
@@ -153,14 +153,14 @@ class LoRaSocket(LoRa):
 
 
 if __name__ == '__main__':
-    #./transceiver.py -s INTERFACE_IN -f INTERFACE_OUT -v
+    #./transceiver.py -i INTERFACE_IN -o INTERFACE_OUT -v
     parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--sniff", dest="sniff", default="eth0", help="Sniffed Interface", required=False)
-    parser.add_argument("-f", "--forward", dest="forward", default="eth0", help="Send Interface", required=False)
+    parser.add_argument("-i", "--in", dest="pktin", default="eth0", help="Sniffed Interface (packet in)", required=False)
+    parser.add_argument("-o", "--out", dest="pktout", default="eth0", help="Send Interface (packet out)", required=False)
     parser.add_argument("-v", "--verbose", dest="verbose", help="Verbose mode", action='store_true')
     args = parser.parse_args()
-    sniff_if = args.sniff
-    forward_if = args.forward
+    pktin = args.pktin
+    pktout = args.pktout
     verbose = args.verbose
     
     if not verbose:
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     # filter only DHCP packets: port 68 and port 67
     dhcp_pkts = 'port 68 and port 67'
     # remove ssh packets: not port 22
-    SniffWlan = AsyncSniffer(prn=handler.pushpkt, filter=dhcp_pkts, store=False, iface=sniff_if)
+    SniffWlan = AsyncSniffer(prn=handler.pushpkt, filter=dhcp_pkts, store=False, iface=pktin)
     SniffWlan.start()
     # runs handler.run() in another thread
     thread = threading.Thread(target=handler.run)
