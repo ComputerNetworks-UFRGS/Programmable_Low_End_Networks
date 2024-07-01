@@ -65,6 +65,7 @@ class Handler:
                 # breaks it into pieces
                 packets = self.split(data)
 
+                print("size: " + len(data))
                 if (verbose):
                     print(data)
 
@@ -84,21 +85,17 @@ class Handler:
                 print(packet.summary())
 
             # if it's a known IP
-            if packet[IP].dst in self.IPlist:
-                print("pkt: "  + packet[IP].dst)
-                print(self.IPlist)
+            if packet[IP].src in self.IPlist:
                 # the packet is converted into bytes and added to the queue
                 self.pktlist.enqueue(bytes(packet))
             else:
-                if packet[BOOTP].yiaddr not in self.IPlist:
-                    self.IPlist.append(packet[BOOTP].yiaddr)
+                if packet.haslayer(BOOTP):
+                    if packet[BOOTP].yiaddr not in self.IPlist:
+                        self.IPlist.append(packet[BOOTP].yiaddr)
+
                     self.pktlist.enqueue(bytes(packet))
-                    print("IP: " + packet[IP].dst)
-                    print(self.IPlist)
-                else:
-                    self.tx_wait = 0
-        else:
-            self.tx_wait = 0
+                    
+        self.tx_wait = 0
 
         packet = []
 
@@ -133,12 +130,16 @@ class LoRaSocket(LoRa):
                 print("Packet in!\n" + packet.summary())
 
             # if it's a DHCP packet
-            #if packet.haslayer(BOOTP):
-            #    if packet[BOOTP].yiaddr not in handler.IPlist:
-            #        handler.IPlist.append(packet[BOOTP].yiaddr)
+            if packet.haslayer(BOOTP):
+                if packet[BOOTP].yiaddr not in handler.IPlist:
+                    handler.IPlist.append(packet[BOOTP].yiaddr)
+
+            print(handler.IPlist)
 
             # sends packet to network
-            #sendp(packet, iface=pktout)
+            print(packet.show())
+            sendp(packet, iface=pktout)
+            self.payload = []
 
         self.clear_irq_flags(RxDone=1) # clear rxdone IRQ flag
         self.reset_ptr_rx()

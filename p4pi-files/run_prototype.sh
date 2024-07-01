@@ -72,6 +72,7 @@ apt-get install sshpass
 # connect to p4pi-middle and run port-to-port.p4 code
 connect_to_wifi "$SSID_P4_MIDDLE" "$ROOT_PASS"
 sshpass -p "${ROOT_PASS}" ssh "${ROOT_USER}@${IP_P4_MIDDLE}" << EOF
+    $(declare -f run_p4)
     run_p4 "port-to-port.p4"
 EOF
 
