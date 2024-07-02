@@ -51,13 +51,14 @@ We developed these parts separately, and so, now we have to merge these two tech
 - [X] Figure out best way to integrate LoRa Communication and P4Pi OS - DOING
     - usage of dummy interfaces
     - switch with 3 ports (one to communicate with clients, one to send to LoRa and one to receive from LoRa)
+- [ ] Find a better transmission solution between the 2 raspberry pi to avoid packet loss (Julien) - DOING
 - [ ] Test 3 ports approach
 - [ ] Build script to configure virtual network for switch with 3 ports
     - Connect to wifi (Julien) - DONE
     - ssh to p4pi (Julien) - DONE
     - run the P4 code and check if it works (Marcelo) - DOING
     - check internet connection (Marcelo) - DONE
-- [ ] Configure virtual network on startup (Julien) - TO DO
+- [X] Configure virtual network on startup (Julien) - DONE
 - [X] Rebuild sniffer script with scapy
     - sniffer for DHCP packets as test 
 - [X] Decode packets received on the middle p4pi - DONE
