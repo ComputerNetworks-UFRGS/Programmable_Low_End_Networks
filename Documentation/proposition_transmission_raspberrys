@@ -6,7 +6,7 @@ ARQ is simple, but not very effective. Assuming that the data exchange goes perf
 
 In this case, the sender does not receive the acknowledgement, the maximum timeout is exceeded and the frame is re transmitted. The recipient therefore receives two copies of the same frame, and if the frames are not numbered, he has no way of knowing whether the second frame received is a copy of the first or the next frame (which may contain the same data).
 
-![image_1.png](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/Documentation/image_1.png)
+![image_1.png](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/blob/main/Documentation/assets/image_1.png)
 
 ---
 
