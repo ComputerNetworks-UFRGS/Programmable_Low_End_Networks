@@ -64,4 +64,9 @@ We developed these parts separately, and so, now we have to merge these two tech
 - [X] Decode packets received on the middle p4pi - DONE
 - [X] Forward packets to the network - DONE
 - [ ] Analyse throughput of LoRa Antenas - TO DO
-- [ ] Build filter for only client packets, ignoring other packets on the sniffers - TO DO
+- [X] Build filter for only client packets, ignoring other packets on the sniffers - DONE (basic version)
+
+## Future Tasks
+- [ ] Implement DHCP and NAT on local Pi network
+- [ ] Run the LTP protocol P4 code on P4Pi
+- [ ] Implement packets filter on P4
