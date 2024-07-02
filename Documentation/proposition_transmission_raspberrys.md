@@ -18,17 +18,17 @@ We have a sender side and a receiver side, a sequence of numbers and a window si
 
 Here, for example, we have a sequence of numbers, here 8, with a window size of 4.
 
-![Untitled](Stop-and-wait%20ARQ%20a6eb25b76ced4ebbab0e33c4cd906c5b/Untitled%201.png)
+![Untitled](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/blob/main/Documentation/assets/image_2.png)
 
-![Untitled](Stop-and-wait%20ARQ%20a6eb25b76ced4ebbab0e33c4cd906c5b/Untitled%202.png)
+![Untitled](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/blob/main/Documentation/assets/image_3.png)
 
 This means that the sender can send 4 packets without waiting for a response from the receiver; once the receiver sends an ACK, the window shifts and the sender can send an additional packet. 
 
-![Untitled](Stop-and-wait%20ARQ%20a6eb25b76ced4ebbab0e33c4cd906c5b/Untitled%203.png)
+![Untitled](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/blob/main/Documentation/assets/image_4.png)
 
 For example, if packet 2's ACK can't be forwarded, usually not all subsequent packets are re transmitted, and subsequent ACKs are cancelled until the packet is re transmitted. In this case, following the ACK of packet 3, all subsequent packets are re transmitted, and the packet of packet 2 can be retransmitted.
 
-![Untitled](Stop-and-wait%20ARQ%20a6eb25b76ced4ebbab0e33c4cd906c5b/Untitled%204.png)
+![Untitled](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/blob/main/Documentation/assets/image_5.png)
 
 ---
 
@@ -38,7 +38,7 @@ Each Raspberry Pi must manage a token that indicates when it can send packets. F
 
 We have to define in the code the length of the sequence of number we want and the length of the window size.
 
-![Untitled](Stop-and-wait%20ARQ%20a6eb25b76ced4ebbab0e33c4cd906c5b/Untitled%205.png)
+![Untitled](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/blob/main/Documentation/assets/image_6.png)
 
 ---
 
