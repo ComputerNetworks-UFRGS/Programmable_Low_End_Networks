@@ -82,9 +82,9 @@ class Handler:
         if (packet.haslayer(IP)) and (packet.haslayer(Ether)):
             if verbose:
                 print(packet.summary())
-                
+            
             # if it's a known IP
-            if pktin == "wlan0":
+            if host == "end":
                 Filter = packet[IP].src
             else:
                 Filter = packet[IP].dst
@@ -157,12 +157,14 @@ class LoRaSocket(LoRa):
 if __name__ == '__main__':
     #./transceiver.py -i INTERFACE_IN -o INTERFACE_OUT -v
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--in", dest="pktin", default="lorasend", help="Sniffed Interface (packet in)", required=False)
-    parser.add_argument("-o", "--out", dest="pktout", default="lorarecv", help="Send Interface (packet out)", required=False)
+    parser.add_argument("-i", "--in", dest="pktin", default="lorarecv", help="Sniffed Interface (packet in)", required=False)
+    parser.add_argument("-o", "--out", dest="pktout", default="lorasend", help="Send Interface (packet out)", required=False)
     parser.add_argument("-v", "--verbose", dest="verbose", help="Verbose mode", action='store_true')
+    parser.add_argument("-m", "--mode", dest="mode", default="end", help="which host is running the code", required=False)
     args = parser.parse_args()
     pktin = args.pktin
     pktout = args.pktout
+    host = args.mode
     verbose = args.verbose
 
     if not verbose:
