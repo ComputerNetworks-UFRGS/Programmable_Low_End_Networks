@@ -52,19 +52,21 @@ We developed these parts separately, and so, now we have to merge these two tech
     - usage of dummy interfaces
     - switch with 3 ports (one to communicate with clients, one to send to LoRa and one to receive from LoRa)
 - [ ] Find a better transmission solution between the 2 raspberry pi to avoid packet loss (Julien) - DOING
-- [ ] Test 3 ports approach
-- [ ] Build script to configure virtual network for switch with 3 ports
-    - Connect to wifi (Julien) - DONE
-    - ssh to p4pi (Julien) - DONE
-    - run the P4 code and check if it works (Marcelo) - DOING
-    - check internet connection (Marcelo) - DONE
+- [X] Test 3 ports approach
 - [X] Configure virtual network on startup (Julien) - DONE
 - [X] Rebuild sniffer script with scapy
     - sniffer for DHCP packets as test 
 - [X] Decode packets received on the middle p4pi - DONE
 - [X] Forward packets to the network - DONE
-- [ ] Analyse throughput of LoRa Antenas - TO DO
+- [ ] Analyse throughput of LoRa Antenas - DOING
 - [X] Build filter for only client packets, ignoring other packets on the sniffers - DONE (basic version)
+
+## Archive
+- [ ] Build script to configure virtual network for switch with 3 ports
+    - Connect to wifi (Julien) - DONE
+    - ssh to p4pi (Julien) - DONE
+    - run the P4 code and check if it works (Marcelo) - DOING
+    - check internet connection (Marcelo) - DONE
 
 ## Future Tasks
 - [ ] Implement DHCP and NAT on local Pi network
