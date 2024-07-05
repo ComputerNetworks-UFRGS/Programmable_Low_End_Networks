@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#end
+#middle
 """ An asynchronous socket <-> LoRa interface """
 
 # MIT License
@@ -82,25 +82,24 @@ class Handler:
         if (packet.haslayer(IP)) and (packet.haslayer(Ether)):
             if verbose:
                 print(packet.summary())
+                
             # if it's a known IP
             if pktin == "wlan0":
-                IP = packet[IP].src
+                Filter = packet[IP].src
             else:
-                IP = packet[IP].dst
-            if packet[IP].src in self.IPlist:
+                Filter = packet[IP].dst
+
+            if Filter in self.IPlist:
                 # the packet is converted into bytes and added to the queue
-               	self.pktlist.enqueue(bytes(packet))
+                self.pktlist.enqueue(bytes(packet))
                 #print(packet.summary())
             else:
                 if packet.haslayer(BOOTP):
-                    if packet[BOOTP].yiaddr not in self.IPlist:
+                    if (packet[BOOTP].yiaddr not in self.IPlist) and (pktin == "wlan0"):
                         self.IPlist.append(packet[BOOTP].yiaddr)
                         self.pktlist.enqueue(bytes(packet))
 
-        #self.tx_wait = 0
-
         packet = []
-
 
     def split(self, data):
         packets = []
@@ -124,29 +123,24 @@ class LoRaSocket(LoRa):
         handler.tx_wait = 1
         payload = self.read_payload(nocheck=True)
         self.payload += payload
-#        print("recv: " + str(len(payload)))
-
         # if piece received is the last one
         if len(payload) != 127:
             packet = Ether(bytes(self.payload))
 
-            #if (verbose):
-            #    print("Packet in! " + packet.summary())
+            if (verbose):
+                print("Packet in!  " + packet.summary())
 
             # if it's a DHCP packet
             if packet.haslayer(BOOTP):
                 if packet[BOOTP].yiaddr not in handler.IPlist:
                     handler.IPlist.append(packet[BOOTP].yiaddr)
 
-            #print(handler.IPlist)
-            print(packet.summary())
             # sends packet to network
             sendp(packet, iface=pktout, realtime=True)
             self.payload = []
             handler.tx_wait = 0
-            print(len(packet))
             packet = ""
-            print(1)
+            #sleep(1)
 
         self.clear_irq_flags(RxDone=1) # clear rxdone IRQ flag
         self.reset_ptr_rx()
@@ -157,7 +151,6 @@ class LoRaSocket(LoRa):
         self.clear_irq_flags(TxDone=1) # clear txdone IRQ flag
         self.set_dio_mapping([0] * 6)
         self.set_mode(MODE.RXCONT)
-        #sleep(1)
         handler.tx_wait = 0
 
 
@@ -171,17 +164,16 @@ if __name__ == '__main__':
     pktin = args.pktin
     pktout = args.pktout
     verbose = args.verbose
-    
+
     if not verbose:
         print("You are running on silent mode!")
-     
+
     handler = Handler()
     lora = LoRaSocket(verbose=False)
     lora.set_bw(9)
     lora.set_freq(915)
-
     # filter only DHCP packets: port 68 and port 67
-    dhcp_pkts = 'port 68 and port 67'
+    #dhcp_pkts = 'port 68 and port 67'
     # remove ssh packets: not port 22
     SniffWlan = AsyncSniffer(prn=handler.pushpkt, store=False, iface=pktin)
     SniffWlan.start()
