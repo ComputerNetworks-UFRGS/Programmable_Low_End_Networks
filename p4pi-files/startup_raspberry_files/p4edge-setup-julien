@@ -1,78 +1,84 @@
 #!/bin/bash
 
-# Create the main bridge
 brctl addbr br0
+ip netns add gigport
+
+ip netns exec gigport brctl addbr br1
+ip netns exec gigport brctl setageing br1 0
+
 brctl setageing br0 0
 
-# Create network namespaces for LoRa send and receive
-#ip netns add lorasend
-#ip netns add lorarecv
+ip link add dev veth0 type veth peer name veth0-1
+ip link add dev veth1 type veth peer name veth1-1
+sudo modprobe dummy
+ip link add lorasend type dummy
+ip link add lorarecv type dummy
+sudo nmcli comnnection add type dummy ifname lorasend
+sudo nmcli comnnection add type dummy ifname lorarecv
 
-# Create the bridge inside the namespaces
-#ip netns exec lorasend brctl addbr br1
-#ip netns exec lorasend brctl setageing br1 0
-#ip netns exec lorarecv brctl addbr br2
-#ip netns exec lorarecv brctl setageing br2 0
-brctl addbr br1
-brctl setageing br1 0
-brctl addbr br2
-brctl setageing br2 0
-
-# Create veth pairs
-ip link add dev veth0 type veth peer name veth0-1  # Client communication
-ip link add dev veth1 type veth peer name veth1-1  # Send to LoRa
-ip link add dev veth2 type veth peer name veth2-1  # Receive from LoRa
-
-# Set MAC addresses for veth pairs (optional)
 ip link set dev veth0 address 10:04:00:00:00:00
 ip link set dev veth0-1 address 10:04:00:00:00:10
 ip link set dev veth1 address 10:04:00:00:10:00
 ip link set dev veth1-1 address 10:04:00:00:10:10
-ip link set dev veth2 address 10:04:00:10:00:00
-ip link set dev veth2-1 address 10:04:00:10:00:10
 
-# Bring up the veth interfaces
+ip link set dev veth0 up
+ip link set dev veth1 up
+
+ip link set dev veth0-1 up
+ip link set veth1-1 netns gigport
+ip netns exec gigport ip link set dev veth1-1 up
+ip netns exec gigport ethtool -K veth1-1 tx off
+
+ethtool -K veth0 tx off
+ethtool -K veth1 tx off
+
+ethtool -K veth0-1 tx off
+
+brctl addif br0 veth0-1
+ip netns exec gigport brctl addif br1 veth1-1
+ip netns exec gigport ip addr add 192.168.4.150/24 dev br1
+
+ip add 192.168.4.1 dev veth1
 ip link set dev veth0 up
 ip link set dev veth0-1 up
 ip link set dev veth1 up
-#ip link set dev veth1-1 netns lorasend
-ip link set dev veth2 up
-#ip link set dev veth2-1 netns lorarecv
-#ip netns exec lorasend ip link set dev veth1-1 up
 ip link set dev veth1-1 up
-#ip netns exec lorarecv ip link set dev veth2-1 up
-ip link set dev veth2-1 up
 
-# Disable offloading
-ethtool -K veth0 tx off
-ethtool -K veth0-1 tx off
-ethtool -K veth1 tx off
-#ip netns exec lorasend ethtool -K veth1-1 tx off
-ethtool -K veth1-1 tx off
-ethtool -K veth2 tx off
-#ip netns exec lorarecv ethtool -K veth2-1 tx off
-ethtool -K veth2-1 tx off
+echo "Running $1 on bmv2 switch"
+echo "$1" > t4p4s-switch
+echo "Restarting bmv2.service"
+systemctl restart bmv2.service
 
-# Add interfaces to the bridges
-brctl addif br0 veth0-1
-sudo brctl addif br0 wlan0
-#ip netns exec lorasend brctl addif br1 veth1-1
-brctl addif br1 veth1-1
-sudo brctl addif br1 eth0
-#ip netns exec lorarecv brctl addif br2 veth2-1
-brctl addif br2 veth2-1
-sudo brctl addif br2 eth0
+sleep 2
 
-# Bring up the bridges
-ip link set dev br0 up
-ip link set dev br1 up
-ip link set dev br2 up
+if [ systemctl is-active --quiet "bmv2.service" ]; then
+    echo "bmv2 is running successfully!"
+else
+    echo "Something went wrong!"
+    return 1
+fi
 
-#ip netns exec lorasend ip link set dev br1 up
-#ip netns exec lorarecv ip link set dev br2 up
+return 0
 
-# Bring up loopback interfaces in namespaces
-#ip netns exec lorasend ip link set lo up
-#ip netns exec lorarecv ip link set lo up
+bvm2-start=("#!/bin/bash"
+            "export P4PI=/root/PI"
+            "export GRPCPP=/root/P4Runtime_GRPCPP"
+            "export GRPC=/root/grpc"
+            "BM2_WDIR=/root/bmv2"
+            "P4_PROG=l2switch"
+            "T4P4S_PROG_FILE=/root/t4p4s-switch"
+            "if [ -f "${T4P4S_PROG_FILE}" ]; then"
+            "    P4_PROG=$(cat "${T4P4S_PROG_FILE}")"
+            "else"
+            "    echo '${P4_PROG}' > '${T4P4S_PROG_FILE}'"
+            "fi"
+            "rm -rf ${BM2_WDIR}/bin"
+            "mkdir ${BM2_WDIR}/bin"
+            "echo 'Compiling P4 code'"
+            "p4c-bm2-ss -I /usr/share/p4c/p4include --std p4-16 --p4runtime-files ${BM2_WDIR}/bin/${P4_PROG}.p4info.txt -o ${BM2_WDIR}/bin/${P4_PROG}.json ${BM2_WDIR}/examples/${P4_PROG}/${P4_PROG}.p4"
+            "echo 'Launching BMv2 switch'"
+            "sudo simple_switch_grpc -i 0@wlan0 -i 1@lorasend -i 2@lorarecv ${BM2_WDIR}/bin/${P4_PROG}.json -- --grpc-server-addr 127.0.0.1:50051")
 
-echo "Virtual switch with 3 ports configured successfully."
+for ligne in "${bvm2-start[@]}"; do
+    echo "$ligne" >> /usr/bin/bmv2-start
+done
