@@ -79,6 +79,6 @@ bvm2-start=("#!/bin/bash"
             "echo 'Launching BMv2 switch'"
             "sudo simple_switch_grpc -i 0@wlan0 -i 1@lorasend -i 2@lorarecv ${BM2_WDIR}/bin/${P4_PROG}.json -- --grpc-server-addr 127.0.0.1:50051")
 
-for ligne in "${bvm2-start[@]}"; do
-    echo "$ligne" >> /usr/bin/bmv2-start
+for line in "${bvm2-start[@]}"; do
+    echo "$line" >> /usr/bin/bmv2-start
 done
