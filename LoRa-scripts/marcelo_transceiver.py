@@ -80,9 +80,11 @@ class Handler:
     def pushpkt(self, packet):
         # if is valid packet
         if (packet.haslayer(IP)) and (packet.haslayer(Ether)):
-            if verbose:
-                print(packet.summary())
-            
+            #if verbose:
+            print(packet.summary())
+
+            print(self.IPlist)
+
             # if it's a known IP
             if host == "end":
                 Filter = packet[IP].src
@@ -95,7 +97,7 @@ class Handler:
                 #print(packet.summary())
             else:
                 if packet.haslayer(BOOTP):
-                    if (packet[BOOTP].yiaddr not in self.IPlist) and (pktin == "wlan0"):
+                    if (packet[BOOTP].yiaddr!= '0.0.0.0' and packet[BOOTP].yiaddr not in self.IPlist):
                         self.IPlist.append(packet[BOOTP].yiaddr)
                         self.pktlist.enqueue(bytes(packet))
 
@@ -125,18 +127,33 @@ class LoRaSocket(LoRa):
         self.payload += payload
         # if piece received is the last one
         if len(payload) != 127:
+            print(len(self.payload))
             packet = Ether(bytes(self.payload))
 
-            if (verbose):
-                print("Packet in!  " + packet.summary())
+            print(handler.IPlist)
+
+            #if (verbose):
+            print("Packet in!  " + packet.summary())
 
             # if it's a DHCP packet
             if packet.haslayer(BOOTP):
-                if packet[BOOTP].yiaddr not in handler.IPlist:
+                if (packet[BOOTP].yiaddr not in handler.IPlist):
                     handler.IPlist.append(packet[BOOTP].yiaddr)
-
+            
             # sends packet to network
-            sendp(packet, iface=pktout, realtime=True)
+
+            if host == 'middle':
+                packet[IP].src = "143.54.49.51"
+                packet[Ether].src = "d8:3a:dd:88:ca:94"
+                if IP in packet:
+                    del packet[IP].chksum
+                if UDP in packet:
+                    del packet[UDP].chksum
+                if TCP in packet:
+                    del packet[TCP].chksum
+                packet.show()
+                
+            sendp(packet, iface=pktin, realtime=True)
             self.payload = []
             handler.tx_wait = 0
             packet = ""
@@ -177,7 +194,7 @@ if __name__ == '__main__':
     # filter only DHCP packets: port 68 and port 67
     #dhcp_pkts = 'port 68 and port 67'
     # remove ssh packets: not port 22
-    SniffWlan = AsyncSniffer(prn=handler.pushpkt, store=False, iface=pktin)
+    SniffWlan = AsyncSniffer(prn=handler.pushpkt, filter="(udp port 67 or udp port 68) or (tcp and not (port 22 or port 53))", store=False, iface=pktout)
     SniffWlan.start()
     # runs handler.run() in another thread
     thread = threading.Thread(target=handler.run)
