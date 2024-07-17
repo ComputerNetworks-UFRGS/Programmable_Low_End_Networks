@@ -1,29 +1,4 @@
 #!/usr/bin/env python3
-#middle
-""" An asynchronous socket <-> LoRa interface """
-
-# MIT License
-#
-# Copyright (c) 2016 bjcarne
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
 
 import sys, threading, argparse
 from time import time,sleep
@@ -33,6 +8,10 @@ from SX127x.board_config import BOARD
 
 BOARD.setup()
 verbose = False
+
+TREDBOLD =  '\033[31;1m'
+TGREEN =  '\033[32m' 
+TYELLOW =  '\033[33m'
 
 class Queue:
     def __init__(self):
@@ -54,7 +33,7 @@ class Handler:
     def __init__(self):
         self.tx_wait = 0
         self.pktlist = Queue()
-        self.IPlist = []
+        self.list = []
 
     def run(self):
         while True:
@@ -65,17 +44,14 @@ class Handler:
                 # breaks it into pieces
                 packets = self.split(data)
 
-                if (verbose):
-                    print(data)
-
                 # sends the pieces one by one
                 for packet in packets:
                     lora.write_payload(list(packet))
                     lora.set_dio_mapping([1,0,0,0,0,0]) # set DIO0 for txdone
                     lora.set_mode(MODE.TX)
                     self.tx_wait = 1
-                    sleep(1)
-            sleep(1)
+                    sleep(0.5) # less time for better transmision
+            sleep(0.5)
 
     def pushpkt(self, packet):
         # if is valid packet
@@ -83,23 +59,32 @@ class Handler:
             #if verbose:
             print(packet.summary())
 
-            print(self.IPlist)
+            #print(self.list)
+            #if packet[IP].src in [pos[0] for pos in self.list]:
 
-            # if it's a known IP
-            if host == "end":
-                Filter = packet[IP].src
+            if host == 'end':
+                known_ip = packet[IP].src in [pos[0] for pos in self.list]
             else:
-                Filter = packet[IP].dst
+                known_ip = packet[IP].src in self.list
 
-            if Filter in self.IPlist:
+            if known_ip:
                 # the packet is converted into bytes and added to the queue
                 self.pktlist.enqueue(bytes(packet))
-                #print(packet.summary())
+                print(TYELLOW + "SEND: ")
+                print(packet.summary())
             else:
                 if packet.haslayer(BOOTP):
-                    if (packet[BOOTP].yiaddr!= '0.0.0.0' and packet[BOOTP].yiaddr not in self.IPlist):
-                        self.IPlist.append(packet[BOOTP].yiaddr)
-                        self.pktlist.enqueue(bytes(packet))
+                    if host == "end":
+                        #self.pktlist.enqueue(bytes(packet))
+                        if (packet[BOOTP].yiaddr != '0.0.0.0' and (packet[BOOTP].yiaddr not in [pos[0] for pos in self.list])):
+                            self.list.append((packet[BOOTP].yiaddr, packet[Ether].dst))
+                            print(self.list)
+                            self.pktlist.enqueue(bytes(packet))
+                            print(f"IP {packet[BOOTP].yiaddr}" )
+                    else:
+                        if lora.RMAC == "":
+                            lora.RMAC = packet[Ether].src
+                            print(lora.RMAC)
 
         packet = []
 
@@ -119,6 +104,13 @@ class LoRaSocket(LoRa):
         self.set_max_payload_length(128) # set max payload to max fifo buffer length
         self.payload = []
         self.set_dio_mapping([0] * 6) #initialise DIO0 for rxdone
+        self.OWN_IP = get_if_addr(pktout)
+        #print(self.OWN_IP)
+        self.OWN_MAC = get_if_hwaddr(pktout)
+        #print(self.OWN_MAC)
+        self.RMAC = "7c:0e:ce:25:60:97"
+        #p = srp1(Ether()/IP(dst="8.8.8.8", ttl = 1)/ICMP()/"XXXXXXXXXXX")
+        #self.RMAC = p[Ether].src
 
     # when LoRa receives data send to socket conn
     def on_rx_done(self):
@@ -130,30 +122,50 @@ class LoRaSocket(LoRa):
             print(len(self.payload))
             packet = Ether(bytes(self.payload))
 
-            print(handler.IPlist)
+            print(handler.list)
 
             #if (verbose):
-            print("Packet in!  " + packet.summary())
+            print(TGREEN + "Packet in!  " + packet.summary())
 
             # if it's a DHCP packet
-            if packet.haslayer(BOOTP):
-                if (packet[BOOTP].yiaddr not in handler.IPlist):
-                    handler.IPlist.append(packet[BOOTP].yiaddr)
-            
-            # sends packet to network
+            if packet.haslayer(IP) and (not packet.haslayer(BOOTP)):
+                if host == "end":
+                    print(handler.list)
+                    for client_IP, client_MAC in handler.list:
+                        packet[IP].dst = client_IP
+                        packet[Ether].dst = client_MAC
+                        packet[Ether].src = self.OWN_MAC
+                        del packet.chksum
+                        del packet[IP].chksum
+                        if packet.haslayer(TCP):
+                            del packet[TCP].chksum
+                        if packet.haslayer(UDP):
+                            del packet[UDP].chksum
+                        packet.show2()
+                        threading.Thread(target=self.send_packet, args=(packet,)).start()
 
-            if host == 'middle':
-                packet[IP].src = "143.54.49.51"
-                packet[Ether].src = "d8:3a:dd:88:ca:94"
-                if IP in packet:
+                if host == "middle":
+                    packet[IP].src = self.OWN_IP
+                    packet[Ether].src = self.OWN_MAC
+                    packet[Ether].dst = self.RMAC
+                    if (packet[IP].dst not in handler.list):
+                        handler.list.append(packet[IP].dst)
+                    del packet.chksum
                     del packet[IP].chksum
-                if UDP in packet:
-                    del packet[UDP].chksum
-                if TCP in packet:
-                    del packet[TCP].chksum
-                packet.show()
-                
-            sendp(packet, iface=pktin, realtime=True)
+
+                    if packet.haslayer(TCP):
+                        del packet[TCP].chksum
+                    
+                    if packet.haslayer(UDP):
+                        del packet[UDP].chksum
+
+                    packet.show2()
+                    threading.Thread(target=self.send_packet, args=(packet,)).start()
+
+
+            # sends packet to network
+#            else:
+ #               threading.Thread(target=self.send_packet, args=(packet,)).start()
             self.payload = []
             handler.tx_wait = 0
             packet = ""
@@ -170,12 +182,16 @@ class LoRaSocket(LoRa):
         self.set_mode(MODE.RXCONT)
         handler.tx_wait = 0
 
+    def send_packet(self, packet):
+        # This method sends the packet
+        sendp(packet, iface=pktout, realtime=True)
+
 
 if __name__ == '__main__':
     #./transceiver.py -i INTERFACE_IN -o INTERFACE_OUT -v
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--in", dest="pktin", default="lorarecv", help="Sniffed Interface (packet in)", required=False)
-    parser.add_argument("-o", "--out", dest="pktout", default="lorasend", help="Send Interface (packet out)", required=False)
+    parser.add_argument("-i", "--in", dest="pktin", default="lorasend", help="Sniffed Interface (packet in)", required=False)
+    parser.add_argument("-o", "--out", dest="pktout", default="lorarecv", help="Send Interface (packet out)", required=False)
     parser.add_argument("-v", "--verbose", dest="verbose", help="Verbose mode", action='store_true')
     parser.add_argument("-m", "--mode", dest="mode", default="end", help="which host is running the code", required=False)
     args = parser.parse_args()
@@ -185,7 +201,7 @@ if __name__ == '__main__':
     verbose = args.verbose
 
     if not verbose:
-        print("You are running on silent mode!")
+        print(TREDBOLD + "You are running on silent mode!")
 
     handler = Handler()
     lora = LoRaSocket(verbose=False)
@@ -194,8 +210,12 @@ if __name__ == '__main__':
     # filter only DHCP packets: port 68 and port 67
     #dhcp_pkts = 'port 68 and port 67'
     # remove ssh packets: not port 22
-    SniffWlan = AsyncSniffer(prn=handler.pushpkt, filter="(udp port 67 or udp port 68) or (tcp and not (port 22 or port 53))", store=False, iface=pktout)
-    SniffWlan.start()
+    Sniff = AsyncSniffer(prn=handler.pushpkt, filter="udp or (tcp and not (port 22 or port 53))", store=False, iface=pktin)
+    # if ARP not being sniffed (should be because the port used by arp is 219 tcp)
+    #if end:
+    SniffOut = AsyncSniffer(prn=handler.pushpkt, filter = "icmp", iface=pktin, store=False)
+    Sniff.start()
+    SniffOut.start()
     # runs handler.run() in another thread
     thread = threading.Thread(target=handler.run)
     thread.start()
