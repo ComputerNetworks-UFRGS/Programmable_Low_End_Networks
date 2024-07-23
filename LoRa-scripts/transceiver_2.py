@@ -12,7 +12,6 @@ verbose = False
 TREDBOLD =  '\033[31;1m'
 TGREEN =  '\033[32m' 
 TYELLOW =  '\033[33m'
-INF_ROUTER_MAC = "7c:0e:ce:25:60:97"
 
 class Queue:
     def __init__(self):
@@ -57,38 +56,33 @@ class Handler:
     def pushpkt(self, packet):
         # if is valid packet
         if (packet.haslayer(IP)) and (packet.haslayer(Ether)):
-            if verbose:
-                print(packet.summary())
+            #if verbose:
+            #print(packet.summary())
 
             #print(self.list)
-            if mode == 'end':
+            #if packet[IP].src in [pos[0] for pos in self.list]:
+
+            if host == 'end':
                 known_ip = packet[IP].src in [pos[0] for pos in self.list]
             else:
-                known_ip = packet[IP].src in self.list
+                known_ip = (packet[IP].src in self.list) and (packet[IP].src != "143.54.49.51" and not packet.haslayer(BOOTP))
 
             if known_ip:
                 # the packet is converted into bytes and added to the queue
                 self.pktlist.enqueue(bytes(packet))
-
-                if verbose:
-                    print(TYELLOW + "SEND: ")
-                    print(packet.summary())
+                print(TYELLOW + "SEND: ")
+                print(packet.summary())
             else:
                 if packet.haslayer(BOOTP):
-                    if mode == "end":
-                        #self.pktlist.enqueue(bytes(packet))
+                    if host == "end":
+                        if packet[IP].src == "0.0.0.0":
+                            self.pktlist.enqueue(bytes(packet))
                         if (packet[BOOTP].yiaddr != '0.0.0.0' and (packet[BOOTP].yiaddr not in [pos[0] for pos in self.list])):
                             self.list.append((packet[BOOTP].yiaddr, packet[Ether].dst))
+                    if host == "middle":
+                        if (packet[IP].src == "143.54.48.1"):
+                            print(packet[Ether].dst)
                             self.pktlist.enqueue(bytes(packet))
-                            if verbose:
-                                print(self.list)
-                                print(f"IP {packet[BOOTP].yiaddr}" )
-                    else:
-                        if lora.RMAC == "":
-                            lora.RMAC = packet[Ether].src
-
-                            if verbose:
-                                print(lora.RMAC)
 
         packet = []
 
@@ -108,9 +102,16 @@ class LoRaSocket(LoRa):
         self.set_max_payload_length(128) # set max payload to max fifo buffer length
         self.payload = []
         self.set_dio_mapping([0] * 6) #initialise DIO0 for rxdone
-        self.OWN_IP = get_if_addr(pktout)
-        self.OWN_MAC = get_if_hwaddr(pktout)
-        self.RMAC = INF_ROUTER_MAC
+        if host == "end":
+            self.OWN_IP = get_if_addr("wlan0")
+            self.OWN_MAC = get_if_hwaddr("wlan0")
+        else:
+            self.OWN_IP = get_if_addr("eth0")
+            self.OWN_MAC = get_if_hwaddr("eth0")
+
+        self.RMAC = "7c:0e:ce:25:60:97"
+        #p = srp1(Ether()/IP(dst="8.8.8.8", ttl = 0)/ICMP()/"XXXXXXXXXXX")
+        #print(p[Ether].src)
 
     # when LoRa receives data send to socket conn
     def on_rx_done(self):
@@ -119,55 +120,61 @@ class LoRaSocket(LoRa):
         self.payload += payload
         # if piece received is the last one
         if len(payload) != 127:
-            print(len(self.payload))
-            packet = Ether(bytes(self.payload))
+            if len(self.payload) > 34:
+                packet = Ether(bytes(self.payload))
 
-            if (verbose):
                 print(handler.list)
+
+            #if (verbose):
                 print(TGREEN + "Packet in!  " + packet.summary())
 
-            # if it's a DHCP packet
-            if packet.haslayer(IP) and (not packet.haslayer(BOOTP)):
-                if mode == "end":
-                    print(handler.list)
-                    for client_IP, client_MAC in handler.list:
-                        packet[IP].dst = client_IP
-                        packet[Ether].dst = client_MAC
-                        packet[Ether].src = self.OWN_MAC
+            # if it's not a DHCP packet
+                if packet.haslayer(IP) and (not packet.haslayer(BOOTP)):
+                    if host == "end":
+                        for client_IP, client_MAC in handler.list:
+                            packet[IP].dst = client_IP
+                            packet[Ether].dst = client_MAC
+                            packet[Ether].src = self.OWN_MAC
+                            del packet.chksum
+                            del packet[IP].chksum
+                            if packet.haslayer(TCP):
+                                del packet[TCP].chksum
+                            if packet.haslayer(UDP):
+                                del packet[UDP].chksum
+                            packet.show2()
+                            threading.Thread(target=self.send_packet, args=(packet,)).start()
+
+                    if host == "middle":
+                        packet[Ether].dst = self.RMAC
                         del packet.chksum
                         del packet[IP].chksum
+
                         if packet.haslayer(TCP):
                             del packet[TCP].chksum
+
                         if packet.haslayer(UDP):
                             del packet[UDP].chksum
+
+                        if (packet[IP].dst not in handler.list):
+                            handler.list.append(packet[IP].dst)
+
                         packet.show2()
+
                         threading.Thread(target=self.send_packet, args=(packet,)).start()
 
-                if mode == "middle":
-                    packet[IP].src = self.OWN_IP
-                    packet[Ether].src = self.OWN_MAC
-                    packet[Ether].dst = self.RMAC
-                    if (packet[IP].dst not in handler.list):
-                        handler.list.append(packet[IP].dst)
-                    del packet.chksum
-                    del packet[IP].chksum
 
-                    if packet.haslayer(TCP):
-                        del packet[TCP].chksum
-                    
-                    if packet.haslayer(UDP):
-                        del packet[UDP].chksum
-
-                    packet.show2()
-                    threading.Thread(target=self.send_packet, args=(packet,)).start()
-
-
-            # sends packet to network
-#            else:
- #               threading.Thread(target=self.send_packet, args=(packet,)).start()
-            self.payload = []
-            handler.tx_wait = 0
-            packet = ""
+                # sends packet to network
+                else:
+                    print("RQST: ")
+                    packet.show()
+                    if host == "end":
+                        sendp(packet, iface = "br0")
+                    else:
+                        sendp(packet, iface="eth0")
+                    #sendp(packet, iface="br0")
+                self.payload = []
+                handler.tx_wait = 0
+                packet = ""
             #sleep(1)
 
         self.clear_irq_flags(RxDone=1) # clear rxdone IRQ flag
@@ -186,7 +193,7 @@ class LoRaSocket(LoRa):
         sendp(packet, iface=pktout, realtime=True)
 
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
     #./transceiver.py -i INTERFACE_IN -o INTERFACE_OUT -v
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--in", dest="pktin", default="lorasend", help="Sniffed Interface (packet in)", required=False)
@@ -196,7 +203,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     pktin = args.pktin
     pktout = args.pktout
-    mode = args.mode
+    host = args.mode
     verbose = args.verbose
 
     if not verbose:
@@ -206,16 +213,15 @@ if __name__ == '__main__':
     lora = LoRaSocket(verbose=False)
     lora.set_bw(9)
     lora.set_freq(915)
-
     # filter only DHCP packets: port 68 and port 67
     #dhcp_pkts = 'port 68 and port 67'
     # remove ssh packets: not port 22
-    Sniff = AsyncSniffer(prn=handler.pushpkt, filter="udp or (tcp and not (port 22 or port 53))", store=False, iface=pktin)
+    Sniff = AsyncSniffer(prn=handler.pushpkt, filter="udp or (tcp and not (port 22))", store=False, iface=pktin)
     # if ARP not being sniffed (should be because the port used by arp is 219 tcp)
     #if end:
-    SniffOut = AsyncSniffer(prn=handler.pushpkt, filter = "icmp", iface=pktin, store=False)
+    #SniffOut = AsyncSniffer(prn=handler.pushpkt, filter = "icmp", iface=pktin, store=False)
     Sniff.start()
-    SniffOut.start()
+    #SniffOut.start()
     # runs handler.run() in another thread
     thread = threading.Thread(target=handler.run)
     thread.start()
