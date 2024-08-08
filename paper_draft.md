@@ -5,6 +5,6 @@
     2. conceptual architecture
 
 ## NSDI
-    1.energy cases
+    1. energy cases
     2. data
     3. use cases
