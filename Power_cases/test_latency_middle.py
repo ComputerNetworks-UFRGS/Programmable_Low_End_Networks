@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys, threading, argparse
-from time import time,sleep,monotonic
+from time import time, sleep, monotonic
 from scapy.all import *
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
@@ -22,6 +22,7 @@ class Handler:
         self.send = host == 'end'
         self.packet_received = False
         self.timer_started = False
+        self.packet_counter = 0  # Initialize a packet counter
 
     def end_test(self):
         self.end = True
@@ -43,13 +44,13 @@ class Handler:
                     lora.set_dio_mapping([1,0,0,0,0,0]) # set DIO0 for txdone
                     lora.set_mode(MODE.TX)
                     self.tx_wait = 1
-                    sleep(0.1) # less time for better transmision
+                    sleep(0.5)
 
                     if not full_packet:
                         self.switch_mode()
                         break
 
-            sleep(0.1)
+            sleep(0.5)
         print("exit")
         sys.exit()
 
@@ -88,17 +89,15 @@ class LoRaSocket(LoRa):
                 if len(payload) != 127:
                     if len(self.payload) > 34:
                         print(TGREEN + "Full packet received")
-                        #self.payload = []
-                        #handler.tx_wait = 0
-                        #handler.switch_mode()
-                        #self.payload = []
                         if host == 'middle':
                             self.end_time = monotonic() #record the end time
                             total_time = self.end_time - self.start_time
-                            #total_time_ms = total_time  * 1000
-                            print(TREDBOLD + f"Paquet transmission time before ACK: {total_time:.4f} ms")
+                            total_time_ms = total_time  * 1000
+                            print(TREDBOLD + f"Paquet transmission time before ACK: {total_time_ms:.4f} ms")
 
                             # Send ACK back to end
+                            sleep(1)
+                            print("test")
                             ack_packet = "ACK".encode()
                             lora.write_payload(list(ack_packet))
                             lora.set_dio_mapping([1, 0, 0, 0, 0, 0])  # Set DIO0 for txdone
@@ -107,9 +106,9 @@ class LoRaSocket(LoRa):
 
                             self.payload = []  # Clear the payload after sending ACK
                             handler.tx_wait = 0
-                            handler.switch_mode()
+#                            handler.switch_mode()
                             handler.packet_received = True  # Mark packet as received
-                            #handler.end_test()  # Ensure the handler ends after sending the ACK
+
             else:
                 # if was in send mode, go to receive mode and vice-versa
                 handler.tx_wait = 0
@@ -131,15 +130,16 @@ class LoRaSocket(LoRa):
             self.set_mode(MODE.RXCONT)
             handler.tx_wait = 0
 
-            if handler.packet_received:
-                handler.end_test()
+            print(TYELLOW + "Switched to RX mode after TX (middle)")
+
+            handler.packet_received = False
+
         except OSError as e:
             print(f"Error in on_tx_done: {e}")
             handler.end_test()
 
 
 if __name__ == '__main__':
-    #./transceiver.py -i INTERFACE_IN -o INTERFACE_OUT -v
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--mode", dest="mode", default="end", help="which host is running the code", required=False)
     parser.add_argument("-f", "--full-packet", dest="full_packet", help="Send full packet or only 127B", action='store_true')
@@ -160,7 +160,6 @@ if __name__ == '__main__':
         lora.set_mode(MODE.RXCONT)
         while True:
             if handler.end:
-                #print("# Delay time: " + str(lora.delay) + "s")
                 sys.exit()
             pass
 
