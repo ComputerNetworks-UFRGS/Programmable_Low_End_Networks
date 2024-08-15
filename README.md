@@ -72,3 +72,27 @@ We developed these parts separately, and so, now we have to merge these two tech
 - [ ] Implement DHCP and NAT on local Pi network
 - [ ] Run the LTP protocol P4 code on P4Pi
 - [ ] Implement packets filter on P4
+
+
+# About the Power cases
+The aim is to calculate how much time takes the packet to be transmitted depending on the size of the packet.
+![power.png](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/blob/main/Documentation/assets/power.png)
+The image above describes the both raspberry pi with their architectures.
+
+## Aims
+1. Latency Calculation (Round-Trip Time - RTT):
+The aim is to calculate the round-trip time (RTT) for packets of varying sizes as they are transmitted between different points in the network architecture. This will help to understand the latency introduced by the network components and the LoRa communication.
+
+- Packet Sizes: The sizes of the packets to be tested include: 64 bytes, 128 bytes, 256 bytes, 512 bytes, 1024 bytes, and 1500 bytes. These sizes cover a range of typical data packets used in network communications.
+
+- Measurement Points:
+    - A ↔ F: Measure the RTT between the Wi-Fi interface on Rasp-end and the Ethernet interface on Rasp-middle.
+    - B ↔ E: Measure the RTT between the internal virtual interfaces within each Raspberry Pi.
+    - C ↔ D: Measure the RTT across the LoRa communication link only.
+
+2. Power Consumption Analysis:
+The second major aim is to measure and analyze the power consumption of the network setup. Given the low-power nature of LoRa.
+
+- Components to Measure:
+    - LoRa Modules (end and middle): Measure the power consumption of the LoRa modules on both Raspberry Pi devices. This will include energy usage during packet transmission, reception, and idle states.
+    - Raspberry Pi Devices (end and middle): Measure the overall power consumption of each Raspberry Pi, including the processing load from running scripts, and the communication interfaces (Wi-Fi, Ethernet, and LoRa).
