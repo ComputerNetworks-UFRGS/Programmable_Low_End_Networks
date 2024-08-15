@@ -77,6 +77,7 @@ We developed these parts separately, and so, now we have to merge these two tech
 # About the Power cases
 The aim is to calculate how much time takes the packet to be transmitted depending on the size of the packet.
 ![power.png](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/blob/main/Documentation/assets/power.png)
+
 The image above describes the both raspberry pi with their architectures.
 
 ## Aims
