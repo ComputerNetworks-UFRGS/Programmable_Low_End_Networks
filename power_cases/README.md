@@ -34,7 +34,7 @@ The second major aim is to measure and analyze the power consumption of the netw
 
     - 64 bytes, 128 bytes, 256 bytes, 512 bytes, 1024 bytes, and 1500 bytes - DONE
 
-- [] Optimize transmission to reduce packet loss between Raspberry Pi devices - DOING
+- [ ] Optimize transmission to reduce packet loss between Raspberry Pi devices - DOING
 
 - [X] Integrate time stamping and TTL logging into the packet processing scripts - DONE
 
@@ -43,6 +43,6 @@ The second major aim is to measure and analyze the power consumption of the netw
     - Measure power usage on LoRa modules during transmission, reception, and idle states - DOING
     - Measure overall power consumption of Raspberry Pi devices under different loads - DOING
 
-- [] Implement error handling and packet retransmission logic to address packet loss issues - TODO
+- [ ] Implement error handling and packet retransmission logic to address packet loss issues - TODO
 
-- [] Optimize LoRa communication parameters for better throughput and reliability - ?
+- [ ] Optimize LoRa communication parameters for better throughput and reliability - ?
