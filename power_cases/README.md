@@ -46,3 +46,50 @@ The second major aim is to measure and analyze the power consumption of the netw
 - [ ] Implement error handling and packet retransmission logic to address packet loss issues - TODO
 
 - [ ] Optimize LoRa communication parameters for better throughput and reliability - ?
+
+## Running scripts
+
+### Step 1 : Running the end Raspberry Pi Script
+
+1. Navigate to the directory where the script is located:
+
+    ```bash
+    cd ~/pySX127x
+    ```
+
+2. Run the end script using the following command:
+
+    ```bash
+    ./latency.py -i 'INT_IN' -o 'INT_OUT' -m end -f
+    ```
+
+Purpose: This script handles packet transmission from the end Raspberry Pi, receives ACKs from the middle Raspberry Pi, and calculates the transmission time for each packet.
+
+### Step 2: Running the middle Raspberry Pi Script
+
+1. Navigate to the directory where the script is located:
+    ```bash
+    cd ~/pySX127x
+    ```
+
+2. Run the middle script using the following command:
+
+    ```bash
+    ./latency.py -i 'INT_IN' -o 'INT_OUT' -m middle -f
+    ```
+
+Purpose: This script handles receiving packets from the end Raspberry Pi, forwarding them if necessary, and sending ACKs back to the end Raspberry Pi.
+
+### Step 3: Monitoring and Analyzing Output
+
+- The end Raspberry Pi will display the TTL of each packet, the time taken to send each packet, and the RTT for each iteration. It will also calculate the average transmission time at the end of the test.
+    
+- The middle Raspberry Pi will display the reception time for each packet and the time before sending an ACK.
+
+### Optional: Power Consumption Measurement
+
+1. Open 2 others terminals to calculate the power consumption :
+
+    ```bash
+    ./calcul_power.py
+    ```
