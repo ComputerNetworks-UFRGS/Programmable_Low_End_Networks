@@ -91,7 +91,7 @@ class LoRaSocket(LoRa):
         else:
             # if was in send mode, go to receive mode and vice-versa
             handler.tx_wait = 0
-            self.payload = ""
+            self.payload = []
 
         if host == 'end':
             print("End of RTL test")
