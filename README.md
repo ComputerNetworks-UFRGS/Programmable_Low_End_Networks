@@ -11,7 +11,7 @@ _The image above describes the structure of the prototype we are building._
 
 A more detailed version of the prototype is depicted below:
 
-![networkd](Documentation/assets/network.png)
+![networkd](Documentation/assets/network-PLEN.png)
 _The image shows the namespaces and the interfaces that are used for a functional communication._
 
 <br/>
