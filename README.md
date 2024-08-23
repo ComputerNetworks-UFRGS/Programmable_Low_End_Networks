@@ -8,6 +8,11 @@ In this document, we aim to explain what is the prototype we are developing; the
 ![prototype](https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/assets/103913045/d92c94cd-479a-4a5c-883f-a585edb2414b)
 _The image above describes the structure of the prototype we are building._
 
+
+A more detailed version of the prototype is depicted below:
+![networkd](Documentation/assets/power.png)
+_The image shows the namespaces and the interfaces that are used for a functional communication._
+
 <br/>
 
 To build the network described above, we have to develop 2 important parts:
@@ -44,11 +49,8 @@ We developed these parts separately, and so, now we have to merge these two tech
     7. Try and run sudo ./lora_util.py
         1. Assertion Error: Try and reboot the raspberry
 
-## Project Decisions
-- Not implementing DHCP server on local network for ease of development
-
 ## Ongoing tasks
-- [X] Figure out best way to integrate LoRa Communication and P4Pi OS - DOING
+- [X] Figure out best way to integrate LoRa Communication and P4Pi OS - DONE
     - usage of dummy interfaces
     - switch with 3 ports (one to communicate with clients, one to send to LoRa and one to receive from LoRa)
 - [ ] Find a better transmission solution between the 2 raspberry pi to avoid packet loss (Julien) - DOING
@@ -60,6 +62,7 @@ We developed these parts separately, and so, now we have to merge these two tech
 - [X] Forward packets to the network - DONE
 - [ ] Analyse throughput of LoRa Antenas - DOING
 - [X] Build filter for only client packets, ignoring other packets on the sniffers - DONE (basic version)
+- [X] Implement DHCP and NAT on local Pi network
 
 ## Archive
 - [ ] Build script to configure virtual network for switch with 3 ports
@@ -69,6 +72,6 @@ We developed these parts separately, and so, now we have to merge these two tech
     - check internet connection (Marcelo) - DONE
 
 ## Future Tasks
-- [ ] Implement DHCP and NAT on local Pi network
 - [ ] Run the LTP protocol P4 code on P4Pi
 - [ ] Implement packets filter on P4
+
