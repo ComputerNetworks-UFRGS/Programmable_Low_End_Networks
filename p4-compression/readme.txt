@@ -7,6 +7,9 @@
     p4c:  69e132d0d663e3408d740aaf8ed534ecefc88810
     bmv2: b447ac4c0cfd83e5e72a3cc6120251c1e91128ab
 
+    Commit do tutorial do P4 com a VM corrigida para Ubuntu16:
+    d964079ef8381316d32a19307509dd4a97edd070
+    
 04. setup extra necessário por causa dos arquivos alterados:
 
     $ cd p4c/build/
@@ -35,3 +38,4 @@
     $ cd targets/simple_switch_grpc/
     $ make
     $ sudo make install
+
