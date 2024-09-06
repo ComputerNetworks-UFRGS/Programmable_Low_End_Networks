@@ -72,7 +72,7 @@ REGISTER_PRIMITIVE(new_addr);
 
 class p4_logger : public ActionPrimitive<const Data &> {
   void operator ()(const Data &operand) {
-    printf("\n\n\n\nP4_LOGGER\n\n\n\n");
+    std::cout << "P4_LOGGER: " << operand.get_string() << std::endl;
   }
 };
 REGISTER_PRIMITIVE(p4_logger);
@@ -80,11 +80,17 @@ REGISTER_PRIMITIVE(p4_logger);
 class deflate_payload : public ActionPrimitive<const Data &, const Data &, Data &, Data &> {
   void operator ()(const Data &payload_in, const Data &payload_in_len, Data &payload_out, Data &payload_out_len) {
 
-    std::cout << "\n\n\n\n\nDEFLATE\n\n\n";
-    std::cout << "Tamanho do payload string: " << payload_in.get_string().length() << "\n";
-    std::cout << "Payload string:\n" << payload_in.get_string() << "\n\n";
-    std::cout << "Payload out string:\n" << payload_out.get_string() << "\n\n";
-    
+    std::cout << "\n **** DEFLATE - 1611 ****\n";
+    std::cout << "Payload in len: " << payload_in_len.get_int() << "\n";
+
+    std::string payload = payload_in.get_string();
+    int payload_len = payload_in.get_string().length();
+    std::cout << "Payload in str:" << std::endl;
+    for (int i = 0; i < payload_len; i++) {
+      printf ("%02x ", (unsigned char) payload[i]);
+    }
+    std::cout << std::endl;
+
     int paylen = payload_in.get_string().length();
     std::string payload_in_copy = payload_in.get_string();
     char payload_in_bytes[paylen];
@@ -107,21 +113,21 @@ class deflate_payload : public ActionPrimitive<const Data &, const Data &, Data 
     unsigned short def_code = deflate(&def_stream, Z_FINISH);
     deflateEnd(&def_stream);
 
-    unsigned short total_out = def_stream.total_out;
-    std::cout << "Codigo de retorno do deflate: " << def_code << "\n";
-    std::cout << "Tamanho do payload apos o deflate: " << total_out << "\n\n";
+    std::cout << "zlib: return_code: " << def_code << "\n";
+    std::cout << "zlib: total_out: " << def_stream.total_out << "\n";
 
-    std::cout << "Payload apos o deflate:\n";
-    for (int i = 0; i < total_out; i++) {
-      std::cout << payload_out_bytes[i];
+    payload_out.set(payload_out_bytes, def_stream.total_out);
+    payload_out_len.set(def_stream.total_out);
+
+    std::cout << "\nPayload out len: " << payload_out.get_string().length() << "\n";
+
+    payload = payload_out.get_string();
+    payload_len = payload_out.get_string().length();
+    std::cout << "Payload out str:" << std::endl;
+    for (int i = 0; i < payload_len; i++) {
+      printf ("%02x ", (unsigned char) payload[i]);
     }
-
-    payload_out.set(payload_out_bytes, total_out);
-    payload_out_len.set(total_out);
-
-    std::cout << "\n\nTamanho de payload out string: " << payload_out.get_string().length() << "\n";
-    std::cout << "Payload out string:\n" << payload_out.get_string() << "\n\n\n\n\n\n";
-
+    std::cout << std::endl;
   }
 };
 REGISTER_PRIMITIVE(deflate_payload);
@@ -129,11 +135,18 @@ REGISTER_PRIMITIVE(deflate_payload);
 class inflate_payload : public ActionPrimitive<const Data &, const Data &, Data &, Data &> {
   void operator ()(const Data &payload_in, const Data &payload_in_len, Data &payload_out, Data &payload_out_len) {
     
-    std::cout << "\n\n\n\n\nINFLATE\n\n\n";
-    std::cout << "Tamanho do payload string: " << payload_in.get_string().length() << "\n";
-    std::cout << "Payload string:\n" << payload_in.get_string() << "\n\n";
-    std::cout << "Payload out string:\n" << payload_out.get_string() << "\n\n";
-    
+    std::cout << "\n **** INFLATE - 1611 ****\n";
+
+    std::cout << "Payload in len: " << payload_in_len.get_int() << "\n";
+
+    std::string payload = payload_in.get_string();
+    int payload_len = payload_in.get_string().length();
+    std::cout << "Payload in str:" << std::endl;
+    for (int i = 0; i < payload_len; i++) {
+      printf ("%02x ", (unsigned char) payload[i]);
+    }
+    std::cout << std::endl;
+
     int paylen = payload_in.get_string().length();
     std::string payload_in_copy = payload_in.get_string();
     char payload_in_bytes[paylen];
@@ -156,21 +169,21 @@ class inflate_payload : public ActionPrimitive<const Data &, const Data &, Data 
     unsigned short inf_code = inflate(&inf_stream, Z_NO_FLUSH);
     inflateEnd(&inf_stream);
 
-    unsigned short total_out = inf_stream.total_out;
-    std::cout << "Codigo de retorno do inflate: " << inf_code << "\n";
-    std::cout << "Tamanho do payload apos o inflate: " << total_out << "\n\n";
+    std::cout << "zlib: return_code: " << inf_code << "\n";
+    std::cout << "zlib: total_out: " << inf_stream.total_out << "\n";
 
-    std::cout << "Payload apos o inflate:\n";
-    for (int i = 0; i < total_out; i++) {
-      std::cout << payload_out_bytes[i];
+    payload_out.set(payload_out_bytes, inf_stream.total_out);
+    payload_out_len.set(inf_stream.total_out);
+
+    std::cout << "\nPayload out len: " << payload_out.get_string().length() << "\n";
+
+    payload = payload_out.get_string();
+    payload_len = payload_out.get_string().length();
+    std::cout << "Payload out str:" << std::endl;
+    for (int i = 0; i < payload_len; i++) {
+      printf ("%02x ", (unsigned char) payload[i]);
     }
-
-    payload_out.set(payload_out_bytes, total_out);
-    payload_out_len.set(total_out);
-
-    std::cout << "\n\nTamanho de payload out string: " << payload_out.get_string().length() << "\n";
-    std::cout << "Payload out string:\n" << payload_out.get_string() << "\n\n\n\n\n\n";
-
+    std::cout << std::endl;
   }
 };
 REGISTER_PRIMITIVE(inflate_payload);
