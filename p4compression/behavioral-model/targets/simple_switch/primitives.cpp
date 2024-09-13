@@ -85,17 +85,18 @@ class deflate_payload : public ActionPrimitive<const Data &, const Data &, Data 
 
     std::string payload = payload_in.get_string();
     int payload_len = payload_in.get_string().length();
+    
     std::cout << "Payload in str:" << std::endl;
     for (int i = 0; i < payload_len; i++) {
       printf ("%02x ", (unsigned char) payload[i]);
     }
     std::cout << std::endl;
 
-    int paylen = payload_in.get_string().length();
-    std::string payload_in_copy = payload_in.get_string();
-    char payload_in_bytes[paylen];
-    for (int i = 0; i < paylen; i++) {
-      payload_in_bytes[i] = payload_in_copy[i];
+    //int paylen = payload_in.get_string().length(); // same as payload_len
+    //std::string payload_in_copy = payload_in.get_string(); // same as payload
+    char payload_in_bytes[payload_len];
+    for (int i = 0; i < payload_len; i++) {
+      payload_in_bytes[i] = payload[i];
     }
 
     char payload_out_bytes[MAX_PAY];
@@ -105,7 +106,7 @@ class deflate_payload : public ActionPrimitive<const Data &, const Data &, Data 
     def_stream.zfree     = Z_NULL;
     def_stream.opaque    = Z_NULL;
     def_stream.next_in   = (Bytef*) payload_in_bytes;
-    def_stream.avail_in  = (uInt) paylen;
+    def_stream.avail_in  = (uInt) payload_len;
     def_stream.next_out  = (Bytef*) payload_out_bytes;
     def_stream.avail_out = (uInt) MAX_PAY;
 
@@ -116,7 +117,13 @@ class deflate_payload : public ActionPrimitive<const Data &, const Data &, Data 
     std::cout << "zlib: return_code: " << def_code << "\n";
     std::cout << "zlib: total_out: " << def_stream.total_out << "\n";
 
-    payload_out.set(payload_out_bytes, def_stream.total_out);
+    std::cout << "\npayload_out_bytes\n";
+    for (int i=0; i < (int) def_stream.total_out; i++){
+      printf("%02x ", (unsigned char) payload_out_bytes[i]);
+    }
+    std::cout << "\n";
+     
+    payload_out.set(payload_out_bytes, (int) def_stream.total_out);
     payload_out_len.set(def_stream.total_out);
 
     std::cout << "\nPayload out len: " << payload_out.get_string().length() << "\n";
