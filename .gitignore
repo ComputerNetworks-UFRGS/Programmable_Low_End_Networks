@@ -1,1 +1,9 @@
 backup-sd/
+*.gz
+
+# ignores zip files
+*.zip
+
+# but not application zip files (with configurations)
+!bind.zip
+!pySX127x*.zip
