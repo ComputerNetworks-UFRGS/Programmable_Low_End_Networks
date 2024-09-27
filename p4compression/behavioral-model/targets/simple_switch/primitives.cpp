@@ -77,23 +77,26 @@ class p4_logger : public ActionPrimitive<const Data &> {
 };
 REGISTER_PRIMITIVE(p4_logger);
 
-class deflate_payload : public ActionPrimitive<const Data &, const Data &, Data &, Data &> {
-  void operator ()(const Data &payload_in, const Data &payload_in_len, Data &payload_out, Data &payload_out_len) {
+class deflate_payload : public ActionPrimitive<Field &, const Data &, Field &, Data &> {
+  void operator ()(Field &payload_in, const Data &payload_in_len, Field &payload_out, Data &payload_out_len) {
 
-    std::cout << "\n **** DEFLATE - 1611 ****\n";
+    std::cout << "\n **** DEFLATE - 25-09 16:42 ****\n";
     std::cout << "Payload in len: " << payload_in_len.get_int() << "\n";
-
     std::string payload = payload_in.get_string();
-    int payload_len = payload_in.get_string().length();
-    
+
+    // in case the packet starts with 0's, fills the beginning of the packet to
+    // fix the removal of them after the convertion to arith. IMPORTANT!!
+    std::string preamble(payload_in_len.get_int() - payload.length(), (char) NULL);
+    payload = preamble + payload;
+
+    int payload_len = payload.length();
+
     std::cout << "Payload in str:" << std::endl;
     for (int i = 0; i < payload_len; i++) {
       printf ("%02x ", (unsigned char) payload[i]);
     }
     std::cout << std::endl;
 
-    //int paylen = payload_in.get_string().length(); // same as payload_len
-    //std::string payload_in_copy = payload_in.get_string(); // same as payload
     char payload_in_bytes[payload_len];
     for (int i = 0; i < payload_len; i++) {
       payload_in_bytes[i] = payload[i];
@@ -117,19 +120,21 @@ class deflate_payload : public ActionPrimitive<const Data &, const Data &, Data 
     std::cout << "zlib: return_code: " << def_code << "\n";
     std::cout << "zlib: total_out: " << def_stream.total_out << "\n";
 
-    std::cout << "\npayload_out_bytes\n";
+    std::cout << "\nCompressed payload\n";
     for (int i=0; i < (int) def_stream.total_out; i++){
       printf("%02x ", (unsigned char) payload_out_bytes[i]);
     }
     std::cout << "\n";
-     
-    payload_out.set(payload_out_bytes, (int) def_stream.total_out);
+
+    payload_out.resize_field(def_stream.total_out);
+    payload_out.set_bytes(payload_out_bytes, def_stream.total_out);
     payload_out_len.set(def_stream.total_out);
 
     std::cout << "\nPayload out len: " << payload_out.get_string().length() << "\n";
 
     payload = payload_out.get_string();
     payload_len = payload_out.get_string().length();
+
     std::cout << "Payload out str:" << std::endl;
     for (int i = 0; i < payload_len; i++) {
       printf ("%02x ", (unsigned char) payload[i]);
@@ -139,10 +144,10 @@ class deflate_payload : public ActionPrimitive<const Data &, const Data &, Data 
 };
 REGISTER_PRIMITIVE(deflate_payload);
 
-class inflate_payload : public ActionPrimitive<const Data &, const Data &, Data &, Data &> {
-  void operator ()(const Data &payload_in, const Data &payload_in_len, Data &payload_out, Data &payload_out_len) {
+class inflate_payload : public ActionPrimitive<const Field &, const Data &, Field &, Data &> {
+  void operator ()(const Field &payload_in, const Data &payload_in_len, Field &payload_out, Data &payload_out_len) {
     
-    std::cout << "\n **** INFLATE - 1611 ****\n";
+    std::cout << "\n **** INFLATE - 24-09 15:15 ****\n";
 
     std::cout << "Payload in len: " << payload_in_len.get_int() << "\n";
 
@@ -178,8 +183,11 @@ class inflate_payload : public ActionPrimitive<const Data &, const Data &, Data 
 
     std::cout << "zlib: return_code: " << inf_code << "\n";
     std::cout << "zlib: total_out: " << inf_stream.total_out << "\n";
-
-    payload_out.set(payload_out_bytes, inf_stream.total_out);
+     
+    // resizes the field (changes the nbits and nbytes of the field and then updates the data);
+    std::cout << "Resizing out field" << "\n";
+    payload_out.resize_field(inf_stream.total_out); 
+    payload_out.set_bytes(payload_out_bytes, inf_stream.total_out);
     payload_out_len.set(inf_stream.total_out);
 
     std::cout << "\nPayload out len: " << payload_out.get_string().length() << "\n";
