@@ -1,0 +1,20 @@
+{
+    "hosts": {
+        "h1": {"ip": "10.10.0.2/24", "mac": "9a:62:78:74:fe:65",
+               "commands":["route add default dev eth0",
+                           "arp -i eth0 -s 10.10.0.129 ea:89:b7:c2:bb:35"]},
+        "h2": {"ip": "10.10.0.129/24", "mac": "ea:89:b7:c2:bb:35",
+               "commands":["route add default dev eth0",
+                           "arp -i eth0 -s 10.10.0.2 9a:62:78:74:fe:65"]}
+    },
+    "switches": {
+        "s1": { },
+        "s2": { }
+    },
+    "links": [
+        ["h1", "s1-p0"], 
+	["h2", "s2-p0"], 
+	["s1-p1", "s2-p2"], 
+	["s1-p2", "s2-p1"]
+    ]
+}

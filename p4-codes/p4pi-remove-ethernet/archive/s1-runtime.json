@@ -1,0 +1,29 @@
+{
+  "target": "bmv2",
+  "p4info": "build/basic.p4.p4info.txt",
+  "bmv2_json": "build/basic.json",
+  "table_entries": [
+    {
+      "table": "MyIngress.eth_forward",
+      "match": {
+        "standard_metadata.ingress_port": 2
+      },
+      "action_name": "MyIngress.eth_build",
+      "action_params": {
+        "dstAddr": "9a:62:78:74:fe:65",
+        "srcAddr": "ea:89:b7:c2:bb:35",
+        "port": 1
+      }
+    },
+    {
+      "table": "MyIngress.eth_forward",
+      "match": {
+        "standard_metadata.ingress_port": 1
+      },
+      "action_name": "MyIngress.eth_destroy",
+      "action_params": {
+        "port": 2
+      }
+    }
+  ]
+}
