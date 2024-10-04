@@ -29,12 +29,10 @@
 
 #include <random>
 #include <thread>
-#include <iostream>
 
 #include "simple_switch.h"
 #include "register_access.h"
 
-// CHANGED
 #include "zlib.h"
 #define MAX_PAY 1458
 
