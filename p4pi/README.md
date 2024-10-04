@@ -19,7 +19,7 @@ Na pasta /compression-files coloquei os arquivos atualizados do BMV2 e do P4c, j
 similar aos passos em p4-compression/readme.txt
    
 ### configuracoes iniciais
-copiar arquivos em _/compression-files/_ para _/root_.
+copiar a pasta _compression-files/_ para _/root_.
 
 discussão sobre [erros do Perl](https://forums.raspberrypi.com/viewtopic.php?t=355095) com locales.
 
