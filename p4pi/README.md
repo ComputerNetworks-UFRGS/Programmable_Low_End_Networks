@@ -106,6 +106,25 @@ table eth_forward {
 }
 ```
 
+Após esses passos, reinicie o serviço do bmv2
+
+```bash
+systemctl restart bmv2.service
+
+# para checar se a compilação e a interpretação funcionaram
+systemctl status bmv2.service
+```
+
+Caso não funcionar, pode ser necessário rodar os seguintes comandos novamente
+
+```bash
+cd /root/behavioral-model
+make install
+cd targets/simple_switch_grps
+make install
+cd ../../../p4c/build
+make install
+```
     
 
 
