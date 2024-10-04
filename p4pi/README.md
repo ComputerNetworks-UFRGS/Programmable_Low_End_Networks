@@ -19,13 +19,15 @@ Na pasta /compression-files coloquei os arquivos atualizados do BMV2 e do P4c, j
 similar aos passos em p4-compression/readme.txt
    
 ### configuracoes iniciais
-copiar arquivos em _/compression-files/_ para _/root_
+copiar arquivos em _/compression-files/_ para _/root_.
+
+discussão sobre [erros do Perl](https://forums.raspberrypi.com/viewtopic.php?t=355095) com locales.
 
 ```bash
 $ sudo -i
 $ cp compression-files/cpfiles.sh .
 $ chmod +x cpfiles.sh
-$ raspi-config _(necessario configurar locales por conta de erros do Perl)_ 
+$ raspi-config _necessario por conta de erros do Perl_ 
     - first "5 Localisation Options"
     - followed by "L1 Locale"
     - hit SPACE to put an asterisk next to the listing
