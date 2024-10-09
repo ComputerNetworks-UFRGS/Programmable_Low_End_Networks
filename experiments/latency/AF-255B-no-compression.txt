@@ -1,0 +1,36 @@
+PING 143.54.49.51 (143.54.49.51) from 10.30.0.1 int0: 200(228) bytes of data.
+208 bytes from 143.54.49.51: icmp_seq=5 ttl=62 time=1560 ms
+208 bytes from 143.54.49.51: icmp_seq=8 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=11 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=14 ttl=62 time=1296 ms
+208 bytes from 143.54.49.51: icmp_seq=17 ttl=62 time=1553 ms
+208 bytes from 143.54.49.51: icmp_seq=20 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=23 ttl=62 time=1553 ms
+208 bytes from 143.54.49.51: icmp_seq=26 ttl=62 time=1555 ms
+208 bytes from 143.54.49.51: icmp_seq=29 ttl=62 time=1553 ms
+208 bytes from 143.54.49.51: icmp_seq=32 ttl=62 time=1553 ms
+208 bytes from 143.54.49.51: icmp_seq=35 ttl=62 time=1555 ms
+208 bytes from 143.54.49.51: icmp_seq=40 ttl=62 time=1553 ms
+208 bytes from 143.54.49.51: icmp_seq=45 ttl=62 time=1558 ms
+208 bytes from 143.54.49.51: icmp_seq=48 ttl=62 time=1558 ms
+208 bytes from 143.54.49.51: icmp_seq=51 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=56 ttl=62 time=1560 ms
+208 bytes from 143.54.49.51: icmp_seq=59 ttl=62 time=1757 ms
+208 bytes from 143.54.49.51: icmp_seq=60 ttl=62 time=1765 ms
+208 bytes from 143.54.49.51: icmp_seq=66 ttl=62 time=1565 ms
+208 bytes from 143.54.49.51: icmp_seq=69 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=72 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=75 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=78 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=81 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=84 ttl=62 time=1553 ms
+208 bytes from 143.54.49.51: icmp_seq=87 ttl=62 time=1553 ms
+208 bytes from 143.54.49.51: icmp_seq=90 ttl=62 time=1554 ms
+208 bytes from 143.54.49.51: icmp_seq=93 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=96 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=99 ttl=62 time=1552 ms
+208 bytes from 143.54.49.51: icmp_seq=100 ttl=62 time=1550 ms
+
+--- 143.54.49.51 ping statistics ---
+100 packets transmitted, 31 received, 69% packet loss, time 100431ms
+rtt min/avg/max/mdev = 1296.115/1558.983/1764.801/69.912 ms, pipe 2

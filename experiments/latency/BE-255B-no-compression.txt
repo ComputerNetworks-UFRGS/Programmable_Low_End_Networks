@@ -1,0 +1,24 @@
+PING 10.10.0.129 (10.10.0.129) from 10.10.0.2 ns-bmv2-0: 200(228) bytes of data.
+208 bytes from 10.10.0.129: icmp_seq=5 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=9 ttl=64 time=1556 ms
+208 bytes from 10.10.0.129: icmp_seq=11 ttl=64 time=2142 ms
+208 bytes from 10.10.0.129: icmp_seq=13 ttl=64 time=1799 ms
+208 bytes from 10.10.0.129: icmp_seq=17 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=20 ttl=64 time=1550 ms
+208 bytes from 10.10.0.129: icmp_seq=23 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=25 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=28 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=32 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=35 ttl=64 time=1553 ms
+208 bytes from 10.10.0.129: icmp_seq=38 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=41 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=44 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=47 ttl=64 time=1589 ms
+208 bytes from 10.10.0.129: icmp_seq=50 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=53 ttl=64 time=1551 ms
+208 bytes from 10.10.0.129: icmp_seq=56 ttl=64 time=1550 ms
+208 bytes from 10.10.0.129: icmp_seq=60 ttl=64 time=1286 ms
+
+--- 10.10.0.129 ping statistics ---
+60 packets transmitted, 19 received, 68.3333% packet loss, time 59819ms
+rtt min/avg/max/mdev = 1286.137/1583.329/2141.596/155.924 ms, pipe 3
