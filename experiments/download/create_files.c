@@ -42,7 +42,8 @@ int main() {
     	FILE *file = fopen(file_name, "wb");
 
     	// Write a Mega of hexadecimal
-	for (int i = 0; i < 1048576; i++) {
+	//for (int i = 0; i < 1048576; i++) {
+        for (int i = 0; i < 102400; i++) {
  	    fputc(hex_digit, file);
 
 	    hex_digit++;
