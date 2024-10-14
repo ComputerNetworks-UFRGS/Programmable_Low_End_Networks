@@ -1,0 +1,188 @@
+SX127x LoRa registers:
+ mode               SLEEP
+ freq               915.000000 MHz
+ coding_rate        CR4_5
+ bw                 BW500
+ spreading_factor   128 chips/symb
+ implicit_hdr_mode  OFF
+ rx_payload_crc     OFF
+ tx_cont_mode       OFF
+ preamble           8
+ low_data_rate_opti OFF
+ agc_auto_on        ON
+ symb_timeout       100
+ freq_hop_period    0
+ hop_channel        {'pll_timeout': 0, 'crc_on_payload': 0, 'fhss_present_channel': 0}
+ payload_length     98
+ max_payload_length 255
+ irq_flags_mask     {'rx_timeout': 0, 'rx_done': 0, 'crc_error': 0, 'valid_header': 0, 'tx_done': 0, 'cad_done': 0, 'fhss_change_ch': 0, 'cad_detected': 0}
+ irq_flags          {'rx_timeout': 0, 'rx_done': 0, 'crc_error': 0, 'valid_header': 0, 'tx_done': 0, 'cad_done': 0, 'fhss_change_ch': 0, 'cad_detected': 0}
+ rx_nb_byte         0
+ rx_header_cnt      0
+ rx_packet_cnt      0
+ pkt_snr_value      0.000000
+ pkt_rssi_value     -157
+ rssi_value         -157
+ fei                0
+ pa_select          PA_BOOST
+ max_power          13.200000 dBm
+ output_power       17.000000 dBm
+ ocp                ON
+ ocp_trim           100.000000 mA
+ lna_gain           NOT_USED
+ lna_boost_lf       0b0
+ lna_boost_hf       0b0
+ detect_optimize    0x3
+ detection_thresh   0xa
+ sync_word          0x12
+ dio_mapping 0..5   [0, 0, 0, 0, 0, 0]
+ tcxo               XTAL
+ pa_dac             default
+ fifo_addr_ptr      0xe2
+ fifo_tx_base_addr  0x80
+ fifo_rx_base_addr  0x0
+ fifo_rx_curr_addr  0x0
+ fifo_rx_byte_addr  0x0
+ status             {'rx_coding_rate': 0, 'modem_clear': 0, 'header_info_valid': 0, 'rx_ongoing': 0, 'signal_sync': 0, 'signal_detected': 0}
+ version            0x12
+
+Tempo de Escrita para envio na LoRa 0.11874537099993177
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11131999999997788
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.12272637099977146
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11150674100008473
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11879718599993794
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11132125899985112
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11877388900029473
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11135701800048992
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869777799984149
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11130387000048358
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869513000056031
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11131598100018891
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869246300011582
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.1113172969999141
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869325900079275
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11166718500044226
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.1186950560004334
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11131392600054824
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869927699990512
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11132562900002085
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11871242600045662
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11130072200012364
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869566600034887
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11130988900004013
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869311099962943
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11130400000001828
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869087000013678
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11130976000004011
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11872279700037325
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11131494399978692
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869688899969333
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11166599999978644
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11874383299982583
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.1113315929997043
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11870125899986306
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11131622200082347
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869470300007379
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11134779599979083
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11868762999984028
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11129807399993297
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869572300020081
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11129033299948787
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11868901900015771
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11129640699982701
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11870611099948292
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.111289628999657
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11868359300024167
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.1113109819998499
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11870353700032865
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11131042499982868
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11870251899927098
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.1112898330002281
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11870050000015908
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11131827799999883
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869118499998876
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.1113155180000831
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.1186951110003065
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11131218500031537
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11870540800009621
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11134607399981178
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11870055599956686
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11180114800026786
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869735199979914
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11130188900006033
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.11869975899935525
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11131048100014596
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.1187146849997589
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11137550000057672
+[32mDEBUG 98 bytes in!
+Tempo de Escrita para envio na LoRa 0.1185655190001853
+[33mSent 98 bytes
+Tempo de leitura da FIFO receive 0.11138603699964733
+[32mDEBUG 98 bytes in!

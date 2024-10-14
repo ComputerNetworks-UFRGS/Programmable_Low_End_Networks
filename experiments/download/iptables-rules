@@ -1,0 +1,30 @@
+Ping
+
+ip netns exec ns iptables -P FORWARD DROP
+ip netns exec ns iptables -I FORWARD -p icmp -j ACCEPT
+
+
+Ping com IP
+
+ip netns exec ns iptables -A FORWARD -d 10.0.0.201 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+ip netns exec ns iptables -A FORWARD -d 10.0.0.201 -m conntrack --ctstate NEW -p icmp -j ACCEPT
+ip netns exec ns iptables -A FORWARD -s 10.0.0.201 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+ip netns exec ns iptables -A FORWARD -s 10.0.0.201 -m conntrack --ctstate NEW -p icmp -j ACCEPT
+ip netns exec ns iptables -A FORWARD -j DROP
+
+
+Download
+
+ip netns exec ns iptables -A FORWARD -d 143.54.48.186 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+ip netns exec ns iptables -A FORWARD -d 143.54.48.186 -m conntrack --ctstate NEW -p tcp --dport 80 -j ACCEPT
+ip netns exec ns iptables -A FORWARD -d 143.54.48.186 -m conntrack --ctstate NEW -p tcp --sport 80 -j ACCEPT
+ip netns exec ns iptables -A FORWARD -s 143.54.48.186 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+ip netns exec ns iptables -A FORWARD -s 143.54.48.186 -m conntrack --ctstate NEW -p tcp --dport 80 -j ACCEPT
+ip netns exec ns iptables -A FORWARD -s 143.54.48.186 -m conntrack --ctstate NEW -p tcp --sport 80 -j ACCEPT
+ip netns exec ns iptables -A FORWARD -j DROP
+
+
+sudo ip route del default via 10.30.0.129 dev int0
+sudo ip route add default via 143.54.48.1 dev eth0
+
+Internet access on eth0
