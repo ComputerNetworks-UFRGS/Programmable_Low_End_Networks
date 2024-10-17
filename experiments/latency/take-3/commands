@@ -1,0 +1,41 @@
+# ------------------------------------------
+# ------------------- AF -------------------
+# ------------------------------------------
+
+# AF - no compression
+ping -I int0 -s 22 -c 35 143.54.48.17 > AF-64B-no-compression.txt
+ping -I int0 -s 86 -c 35 143.54.48.17 > AF-128B-no-compression.txt
+fping -I int0 -b 212 -p 2300 -c 35 143.54.48.17 > AF-255B-no-compression.txt
+
+# AF - compression
+fping -I int0 -b 22 -c 35 143.54.48.17 > AF-64B-compression.txt
+fping -I int0 -b 86 -c 35 143.54.48.17 > AF-128B-compression.txt
+fping -I int0 -b 212 -c 35 143.54.48.17 > AF-255B-compression.txt
+
+# ------------------------------------------
+# ------------------- BE -------------------
+# ------------------------------------------
+
+# BE - no compression
+ip netns exec ns ping -I ns-bmv2-0 -c 35 -s 22 10.10.0.129 > BE-64B-no-compression.txt
+ip netns exec ns ping -I ns-bmv2-0 -c 35 -s 86 10.10.0.129 > BE-128B-no-compression.txt
+ip netns exec ns fping -I ns-bmv2-0 -c 35 -b 212 -p 2300 10.10.0.129 > BE-255B-no-compression.txt
+
+# BE - compression
+ip netns exec ns fping -I ns-bmv2-0 -c 35 -b 22 10.10.0.129 > BE-64B-compression.txt
+ip netns exec ns fping -I ns-bmv2-0 -c 35 -b 86 10.10.0.129 > BE-128B-compression.txt
+ip netns exec ns fping -I ns-bmv2-0 -c 35 -b 212 10.10.0.129 > BE-255B-compression.txt
+
+# ------------------------------------------
+# ------------------- CD -------------------
+# ------------------------------------------
+
+# CD - no compression
+ip netns exec ns fping -c 35 -I ns-bmv2-0 -p 700 -b 22 10.10.0.129 > CD-64B-no-compression.txt
+ip netns exec ns fping -c 35 -I ns-bmv2-0 -p 1000 -b 86 10.10.0.129 > CD-128B-no-compression.txt
+ip netns exec ns fping -c 35 -I ns-bmv2-0 -p 2300 -b 212 10.10.0.129 > CD-255B-no-compression.txt
+
+# CD - compression
+ip netns exec ns fping -c 35 -I ns-bmv2-0 -b 22 10.10.0.129 > CD-64B-compression.txt
+ip netns exec ns fping -c 35 -I ns-bmv2-0 -b 86 10.10.0.129 > CD-128B-compression.txt
+ip netns exec ns fping -c 35 -I ns-bmv2-0 -p 500 -b 212 10.10.0.129 > CD-255B-compression.txt
