@@ -70,5 +70,5 @@ ip netns exec ns fping -c 35 -I ns-bmv2-0 -p 500 -b 212 10.10.0.129 > CD-255B-co
 
 ## Calculations
 
-To calculate CD, take END_TIME - MIDDLE_TIME (total time - time between Middle LoRa script and BMV2).
+To calculate CD, take END_TIME - MIDDLE_TIME (total time - time between Middle LoRa script and BMV2).<br/>
 To calculate DE, take END_TIME + MIDDLE_TIME (Mayer write and read latencies).
