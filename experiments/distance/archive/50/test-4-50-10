@@ -1,0 +1,5 @@
+PING 143.54.48.17 (143.54.48.17) from 10.30.0.1 int0: 86(114) bytes of data.
+
+--- 143.54.48.17 ping statistics ---
+200 packets transmitted, 0 received, 100% packet loss, time 203753ms
+

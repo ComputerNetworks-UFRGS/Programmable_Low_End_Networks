@@ -23,6 +23,16 @@ ip netns exec ns iptables -A FORWARD -s 143.54.48.186 -m conntrack --ctstate NEW
 ip netns exec ns iptables -A FORWARD -s 143.54.48.186 -m conntrack --ctstate NEW -p tcp --sport 80 -j ACCEPT
 ip netns exec ns iptables -A FORWARD -j DROP
 
+Mensagem Whatsapp
+
+ip netns exec ns iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+ip netns exec ns iptables -A FORWARD -m conntrack --ctstate NEW -p tcp -j ACCEPT
+ip netns exec ns iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+ip netns exec ns iptables -A FORWARD -m conntrack --ctstate NEW -p tcp -j ACCEPT
+ip netns exec ns iptables -A FORWARD -j DROP
+
+
+
 
 sudo ip route del default via 10.30.0.129 dev int0
 sudo ip route add default via 143.54.48.1 dev eth0

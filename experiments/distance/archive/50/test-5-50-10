@@ -1,0 +1,6 @@
+PING 143.54.48.17 (143.54.48.17) from 10.30.0.1 int0: 86(114) bytes of data.
+94 bytes from 143.54.48.17: icmp_seq=200 ttl=62 time=1240 ms
+
+--- 143.54.48.17 ping statistics ---
+200 packets transmitted, 1 received, 99.5% packet loss, time 203761ms
+rtt min/avg/max/mdev = 1240.404/1240.404/1240.404/0.000 ms
