@@ -50,29 +50,8 @@ We developed these parts separately, and so, now we have to merge these two tech
     7. Try and run sudo ./lora_util.py
         1. Assertion Error: Try and reboot the raspberry
 
-## Ongoing tasks
-- [X] Figure out best way to integrate LoRa Communication and P4Pi OS - DONE
-    - usage of dummy interfaces
-    - switch with 3 ports (one to communicate with clients, one to send to LoRa and one to receive from LoRa)
-- [ ] Find a better transmission solution between the 2 raspberry pi to avoid packet loss (Julien) - DOING
-- [X] Test 3 ports approach
-- [X] Configure virtual network on startup (Julien) - DONE
-- [X] Rebuild sniffer script with scapy
-    - sniffer for DHCP packets as test 
-- [X] Decode packets received on the middle p4pi - DONE
-- [X] Forward packets to the network - DONE
-- [ ] Analyse throughput of LoRa Antenas - DOING
-- [X] Build filter for only client packets, ignoring other packets on the sniffers - DONE (basic version)
-- [X] Implement DHCP and NAT on local Pi network
-
-## Archive
-- [ ] Build script to configure virtual network for switch with 3 ports
-    - Connect to wifi (Julien) - DONE
-    - ssh to p4pi (Julien) - DONE
-    - run the P4 code and check if it works (Marcelo) - DOING
-    - check internet connection (Marcelo) - DONE
-
-## Future Tasks
-- [ ] Run the LTP protocol P4 code on P4Pi
-- [ ] Implement packets filter on P4
+### Other tasks
+- [ ] create patch file
+- [ ] organize experiments data (datasheet and folder)
+- [ ] analyse gathered data
 

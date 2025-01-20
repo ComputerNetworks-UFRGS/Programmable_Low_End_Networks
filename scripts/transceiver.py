@@ -3,7 +3,6 @@
 import sys, threading, argparse
 from time import sleep
 from collections import deque
-from scapy.all import *
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
 import socket
@@ -36,7 +35,7 @@ class Handler(threading.Thread):
             while self.rx_wait:
                 with lock:
                     self.rx_wait = 0
-                #sleep(0.3)
+                sleep(1)
             if not (self.tx_wait or self.rx_wait) and len(self.packets): # If not waiting for transmission and packets in queue
                 packet = self.packets.popleft()
                 lora.write_payload(list(packet)) # Writes packet for transmission
@@ -48,6 +47,7 @@ class Handler(threading.Thread):
                 data = self.sock.recvfrom(255)
                 self.packets.append(bytes(data[0]))
             except BlockingIOError:
+                #sleep(0.05)
                 pass
 
 class LoRaSocket(LoRa):
@@ -68,9 +68,9 @@ class LoRaSocket(LoRa):
 
         payload = self.read_payload(nocheck=True)  # Reads the antenna
 
-        if self.testBit(payload[20], 5):
-            with lock:
-                handler.rx_wait = 1
+        #if self.testBit(payload[20], 5):
+            #with lock:
+            #    handler.rx_wait = 1
 
         print(TGREEN + "DEBUG " + f'{len(payload)}' + " bytes in!")
         self.send_packet(bytes(payload))
@@ -105,9 +105,9 @@ if __name__ == '__main__':
 
     handler = Handler()
     lora = LoRaSocket(verbose=verbose)
-    lora.set_bw(9)
-    lora.set_spreading_factor(7)
-    lora.set_freq(915)
+    lora.set_bw(8)
+    lora.set_spreading_factor(9)
+    lora.set_freq(868)
     print(lora)
 
     handler.start()
