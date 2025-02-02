@@ -1,5 +1,11 @@
 # Programmable_Low_End_Networks
-UFRGS - Low End Networks project repository.
+
+## Introduction
+
+This is the repo with the source code for the paper "Towards programmable low-end networking: Research challenges and lessons learned", accepted for publication in the 2025 IEEE/IFIP Network Operations and Management Symposium (NOMS 2025) [1]. In that paper, we mention that the research agenda on programmable data planes has been primarily focused on high-end networking devices, driven by technical requirements derived from operations & management needs of large scale datacenters and cloud providers. We also argue in favor of a yet incipient but equally paramount and challenging topic in this agenda: research on programmable low-end devices, like Low-power wide-area network (LPWAN). One main motivation is ``unlocking'' LPWAN, enabling one to freely redefine how they parse and process packets by means of Domain-specific languages such as P4. In addition to reducing capital expenditure by allowing interoperability between devices from multiple vendors, programmability would open LPWAN to an entire novel class of use cases, like providing inclusive internet access to technologically marginalized populations (such as rural communities). To contribute to this emerging research agenda, we propose a conceptual architecture and demonstrate the technical feasibility of a Programmable LPWAN by means of a proof-of-concept prototype, built using off-the-shelf hardware. More importantly, we present and discuss valuable lessons towards the design of such devices, maintaining their popular characteristics (like low power, low cost, long rage) yet freely (re)programmable for a broader class of novel use cases.
+
+[1] V. B. Alves, M. Basso, L. B. Ramos, J. Guillemot, A. Riker, A. Abelém, L. Gaspary, M. F. Zhani, J. Galan-Jimenez, J. A. Wickboldt, and W. Cordeiro, "Towards programmable low-end networking: Research challenges and lessons learned," in 2025 IEEE/IFIP Network Operations and Management Symposium (NOMS 2025). IEEE/IFIP, 2025.
+
 
 ## Pilot Project [Prototype]
 
