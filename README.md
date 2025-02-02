@@ -6,6 +6,22 @@ This is the repo with the source code for the paper "Towards programmable low-en
 
 [1] V. B. Alves, M. Basso, L. B. Ramos, J. Guillemot, A. Riker, A. Abelém, L. Gaspary, M. F. Zhani, J. Galan-Jimenez, J. A. Wickboldt, and W. Cordeiro, "Towards programmable low-end networking: Research challenges and lessons learned," in 2025 IEEE/IFIP Network Operations and Management Symposium (NOMS 2025). IEEE/IFIP, 2025.
 
+## Experiments for Demo Submission
+
+Selected photos taken during the experimentation of our prototype for our submission to NOMS_Demo_Session 2025 - 38th IEEE/IFIP Network Operations and Management Symposium - Demo Session. Check the ![Experiment-Photos-NOMS2025-Demo](Experiment-Photos-NOMS2025-Demo/) folder for more details and photos about the Demo submission.
+
+**Demo paper title:** Bringing Programmable Low-End Networks to Life: A Field Study with An Off-the-Shelf Prototype 
+
+<table align="center">
+<tr>
+  <td><img src="Experiment-Photos-NOMS2025-Demo/prototype_IMG_20250116_100128912_HDR_red.jpg" width="300"/></td>
+  <td><img src="Experiment-Photos-NOMS2025-Demo/pre_experiment_solar_panel2_red.jpg" width="300"/></td>
+</tr>
+<tr>
+  <td><img src="Experiment-Photos-NOMS2025-Demo/20250130_142012_red.jpg" width="300"/></td>
+  <td><img src="Experiment-Photos-NOMS2025-Demo/experiment_50_parkinglot2_red.jpg" width="300"/></td>
+</tr>
+</table>
 
 ## Pilot Project [Prototype]
 
