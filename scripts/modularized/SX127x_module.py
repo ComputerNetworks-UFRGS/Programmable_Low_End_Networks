@@ -57,6 +57,7 @@ class SX127x_PLEN(LoRa):
 				self.controller.setRxWait(True)
 
 		self.sock.send(bytes(payload))
+		self.set_mode(MODE.RXCONT)
 		print(TGREEN + "DEBUG" + f'{len(payload)}' + " bytes in!")
 
 	# Reset LoRa after transmission
@@ -80,6 +81,6 @@ class SX127x_PLEN(LoRa):
 		BOARD.teardown()
 
 	def start(self):
-		self.set_mode(MODE.SLEEP)
 		print(self)
+		self.set_mode(MODE.RXCONT)
 
