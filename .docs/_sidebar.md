@@ -1,0 +1,2 @@
+-   [Home](/)
+-   [LoRa Settings](lora/lora-settings.md)
