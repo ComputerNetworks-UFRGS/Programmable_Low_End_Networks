@@ -1,2 +1,5 @@
--   [Home](/)
+-   [Low-End Nets](/)
 -   [LoRa Settings](lora/lora-settings.md)
+-   [Programmable Layer](p4/programmable-layer.md)
+-   [Network Services](services/services.md)
+-   [Setup scripts](setup/setup.md)

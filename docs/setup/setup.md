@@ -1,0 +1,161 @@
+# Raspberry Pi Setup Scripts
+
+This describes the scripts we configure to run in boot on every device to configure the network we designed, described below:
+
+![Network designed](../assets/setup/network-PLEN.png)
+
+## End device
+
+```bash
+#!/bin/bash
+set -x
+
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+# creates and defines IP for dummy interfaces
+ip link add lorasend type dummy
+ip link add lorarecv type dummy
+ip link set lorasend up
+ip link set lorarecv up
+
+# create veth pairs for bmv2 and internet
+
+ip link add bmv2-0 type veth peer name ns-bmv2-0
+ip link add int0 type veth peer name ns-int0
+
+# create namespace and assign peers from veth pairs to ns
+
+ip netns add ns
+ip link set ns-bmv2-0 netns ns
+ip link set ns-int0 netns ns
+
+# init ip addresses for veth pairs
+
+#  ----> veth pair bmv2
+
+ip addr add 10.10.0.1/24 broadcast 10.10.0.255 dev bmv2-0
+ip link set bmv2-0 up
+
+ip netns exec ns ip link set dev ns-bmv2-0 address 9a:62:78:74:fe:65
+ip netns exec ns ip addr add 10.10.0.2/24 broadcast 10.10.0.255 dev ns-bmv2-0
+ip netns exec ns ip link set ns-bmv2-0 up
+
+#  ----> veth pair int0
+
+ip addr add 10.30.0.1/24 broadcast 10.30.0.255 dev int0
+ip link set int0 up
+ip link set dev int0 address d4:d8:53:f6:32:cc
+
+ip netns exec ns ip addr add 10.30.0.129/24 broadcast 10.30.0.255 dev ns-int0
+ip netns exec ns ip link set ns-int0 up
+
+# init routes
+
+#  ----> routes inside namespace
+
+ip netns exec ns ip route add default via 10.10.0.129 dev ns-bmv2-0
+ip netns exec ns ip route add 10.0.0.0/24 via 10.30.0.1 dev ns-int0
+
+#  ----> local host routes
+
+ip route add default via 10.30.0.129 dev int0
+
+# init local interfaces
+
+ip addr add 10.0.0.1/24 broadcast 10.0.0.255 dev wlan0
+ip link set eth0 down
+
+ip netns exec ns arp -s 10.10.0.129 ea:89:b7:c2:bb:35
+
+#hardware calculating chksum for bind9 not working. Forcing software to do it
+ethtool -K int0 rx off tx off
+
+#Log file for bind9
+
+mkdir /var/log/bind
+chown bind:bind /var/log/bind
+
+# starts the bmv2 switch
+systemctl stop t4p4s-switch
+echo 'three-ports' > /root/t4p4s-switch
+
+systemctl restart bmv2.service
+systemctl restart udhcpd.service
+systemctl restart ssh.service
+systemctl restart bind9.service
+```
+
+## Middle device
+
+```bash
+#!/bin/bash
+set -x
+
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+# creates and defines IP for dummy interfaces
+ip link add lorasend type dummy
+ip link add lorarecv type dummy
+ip link set lorasend up
+ip link set lorarecv up
+
+# create veth pairs for bmv2 and internet
+
+ip link add bmv2-0 type veth peer name ns-bmv2-0
+ip link add int0 type veth peer name ns-int0
+
+# create namespace and assign peers from veth pairs to ns
+
+ip netns add ns
+ip link set ns-bmv2-0 netns ns
+ip link set ns-int0 netns ns
+
+# init ip addresses for veth pairs
+
+#  ----> veth pair bmv2
+
+ip addr add 10.10.0.128/24 broadcast 10.10.0.255 dev bmv2-0
+ip link set bmv2-0 up
+
+ip netns exec ns ip link set dev ns-bmv2-0 address ea:89:b7:c2:bb:35
+ip netns exec ns ip addr add 10.10.0.129/24 broadcast 10.10.0.255 dev ns-bmv2-0
+ip netns exec ns ip link set ns-bmv2-0 up
+
+#  ----> veth pair int0
+
+ip addr add 10.20.0.1/24 broadcast 10.20.0.255 dev int0
+ip link set int0 up
+
+ip netns exec ns ip addr add 10.20.0.129/24 broadcast 10.20.0.255 dev ns-int0
+ip netns exec ns ip link set ns-int0 up
+
+# init routes
+
+#  ----> routes inside namespace
+
+ip netns exec ns ip route add 10.30.0.0/24 via 10.10.0.1 dev ns-bmv2-0 # DNS
+ip netns exec ns ip route add 10.0.0.0/24 via 10.10.0.1 dev ns-bmv2-0 # Devices
+ip netns exec ns ip route add default via 10.20.0.1 dev ns-int0
+
+#  ----> local host routes
+
+ip route add 10.30.0.0/24 via 10.20.0.129 dev int0 # DNS
+ip route add 10.0.0.0/24 via 10.20.0.129 dev int0 # Devices
+
+# init local interfaces
+
+networkctl up eth0 ; dhclient eth0
+ip link set wlan0 down
+ip netns exec ns arp -s 10.10.0.1 9a:62:78:74:fe:65
+
+# starts the bmv2 switch
+systemctl stop t4p4s-switch
+echo 'three-ports' > /root/t4p4s-switch
+
+ip link set wlan0 down
+
+systemctl restart ssh.service
+systemctl restart bmv2.service
+```
