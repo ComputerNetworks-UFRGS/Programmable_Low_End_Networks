@@ -1,4 +1,4 @@
-# LoRa Settings for PLEN
+# LoRa Settings for PLEN (in construction...)
 
 this page describes the LoRa settings used in the prototype presented.
 
@@ -34,4 +34,17 @@ preamble: 5; # default is 8
 
 The ideia of removing the CRC risks long-range communication reliability, however, for our lab environment tests, this configuration saves a lot of transmitting power and makes the transmission of packets a lot faster.
 
-Also, beyond the removal of the `CRC` field, we also reduces the size of the `preamble`, from 8 to 5 symbols, which reduces the transmitting power too. However, these configurations have yet to be proven feasible in a real-world application, given the trade-off between throughput and range.
+Also, beyond the removal of the `CRC` field, we also reduces the size of the `preamble` from 8 to 5 symbols, which reduces the transmitting power too, and used the `implicit header mode`, which omits the header field in the LoRa packet. However, these configurations have yet to be proven feasible in a real-world application, given the trade-off between throughput and range.
+
+```python
+class SX127x_PLEN(LoRa):
+    def __init__(self, lock, pktout, controller, bw, sf, freq):
+        # ...
+        self.set_bw(bw)
+        self.set_spreading_factor(sf)
+        self.set_freq(freq)
+        self.set_preamble(5)
+        self.set_coding_rate(0)
+        self.set_implicit_header_mode(True)
+        # ...
+```
