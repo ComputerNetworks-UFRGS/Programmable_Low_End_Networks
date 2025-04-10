@@ -8,7 +8,7 @@ The information found here is based of the [Sakshama Ghoslya blog](https://www.s
 
 <div style="text-align: center; margin: 32px auto;">
 
-![LoRa Physical Layer.](../assets/lora/LoRa-packet-structure-for-the-physical-layer.png)
+![LoRa Physical Layer.](/assets/lora/LoRa-packet-structure-for-the-physical-layer.png)
 
 </div>
 

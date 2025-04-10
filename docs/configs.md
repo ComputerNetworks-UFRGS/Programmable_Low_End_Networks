@@ -4,7 +4,7 @@ This describes the scripts we configure to run in boot on every device to config
 
 \*\* The firewall was used to optimize the network communication, dropping all unecessary traffic. For more details about the firewall, please check out the [Firewall settings](/firewall.md) docs page.
 
-![Network designed](../assets/setup/network-PLEN.png)
+![Network designed](/assets/setup/network-PLEN.png)
 
 ## End device configuration
 
