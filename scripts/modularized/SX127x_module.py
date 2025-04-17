@@ -22,15 +22,19 @@ TYELLOW = '\033[33m'
 class SX127x_PLEN(LoRa):
 	def __init__(self, lock, pktout, controller, bw, sf, freq):
 		BOARD.setup()
-		super().__init__(False) # verbose
+		super().__init__(True) # verbose
 		self.set_mode(MODE.SLEEP)
 		self.set_pa_config(pa_select=1)
 		self.set_max_payload_length(255)
+		self.set_payload_length(1)
 		self.set_dio_mapping([0] * 6)
 		self.controller = controller
 		self.set_bw(bw)
 		self.set_spreading_factor(sf)
 		self.set_freq(freq)
+		self.set_preamble(5)
+		#self.set_lna_gain(10)
+		self.set_coding_rate(0)
 		self.lock = lock
 	
 		# Socket with PKTOUT (reiceved from antenna) 
@@ -43,7 +47,7 @@ class SX127x_PLEN(LoRa):
 		self.set_dio_mapping([1,0,0,0,0,0])
 		self.set_mode(MODE.TX)
 		self.controller.setTxWait(True)
-		print(TYELLOW + "Sent " + f'{len(packet)}' + " bytes")
+		print(TYELLOW + "TX " + f'{len(packet)}' + " bytes")
 
 
 	# clear rcv flags nd prepare antenna for new tx/rx
@@ -57,8 +61,9 @@ class SX127x_PLEN(LoRa):
 				self.controller.setRxWait(True)
 
 		self.sock.send(bytes(payload))
+		self.controller.wait_res = False
+		print(TGREEN + "RX - " + f'{len(payload)}' + " bytes in!")
 		self.set_mode(MODE.RXCONT)
-		print(TGREEN + "DEBUG" + f'{len(payload)}' + " bytes in!")
 
 	# Reset LoRa after transmission
 	def on_tx_done(self):
@@ -83,4 +88,3 @@ class SX127x_PLEN(LoRa):
 	def start(self):
 		print(self)
 		self.set_mode(MODE.RXCONT)
-
