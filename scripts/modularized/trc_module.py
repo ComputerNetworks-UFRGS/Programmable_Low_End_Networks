@@ -2,7 +2,7 @@
 
 from SX127x_module import SX127x_PLEN
 import sys, threading, argparse, socket
-from time import sleep
+from time import sleep, time
 from collections import deque
 
 TREDBOLD = '\033[31;1m'
@@ -33,6 +33,7 @@ class Handler(threading.Thread):
 		self.controller = controller
 		self.transceiver = transceiver
 		self.lock = lock
+		self.count = 0
 		
 	def run(self):
 		while True:
@@ -40,13 +41,19 @@ class Handler(threading.Thread):
 			while self.controller.getRxWait():
 				with self.lock:
 					self.controller.setRxWait(False)
-				# sleep(1)
+				#sleep(1)
 
 			# send packets
-			if not self.controller.wait() and len(self.packets):
+			if not self.controller.wait_res and not self.controller.wait() and len(self.packets):
 				packet = self.packets.popleft()
 				transceiver.send(packet)
-				
+				self.count = time()
+				print('queue size: ' + str(len(self.packets)))
+				self.controller.wait_res = True
+
+			if time() - self.count >=1:
+				self.controller.wait_res = False
+
 			# recv packets
 			try:
 				data = self.sock.recvfrom(255)
@@ -72,6 +79,7 @@ class Controller():
 	def __init__(self):
 		self.tx_wait = False
 		self.rx_wait = False
+		self.wait_res = False
 
 	def setTxWait(self, val):
 		self.tx_wait = val
@@ -105,4 +113,3 @@ if __name__ == '__main__':
 	finally:
 		transceiver.shutdown()
 		handler.shutdown()
-
