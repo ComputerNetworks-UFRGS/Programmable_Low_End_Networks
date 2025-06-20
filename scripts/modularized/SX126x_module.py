@@ -124,13 +124,23 @@ class SX126x_PLEN:
         
             if self.ser.in_waiting > 0:
                 payload = self.ser.read(self.ser.in_waiting)
+                payload = payload[6:]
                 self.on_rx_done(payload)
+                
+    def build_antena_header(self, dest_addr=0xFFFF):
+        dest_high = (dest_addr >> 8) & 0xFF
+        dest_low = dest_addr & 0xFF
+        src_high = self.cfg_reg[3]
+        src_low = self.cfg_reg[4]
+        freq_offset = self.cfg_reg[8]
+        return bytes([dest_high, dest_low, freq_offset, src_high, src_low, freq_offset])
 
     def send(self, data: bytes):
         self._wait_aux_high()
 
         self.controller.setTxWait(True)
-        self.ser.write(data)
+        data_with_header = self.buil_antena_header() + data
+        self.ser.write(data_with_header)
         print(f"{len(data)} bytes sent")
 
         self._wait_aux_high()
@@ -140,7 +150,7 @@ class SX126x_PLEN:
         if self.fragmented_packet(payload):
             with self.lock:
                 self.controller.setRxWait(True)
-
+        print(payload)
         self.sock.send(payload)
         self.controller.wait_res = False
         print(f"{len(payload)} bytes recv")
