@@ -139,7 +139,7 @@ class SX126x_PLEN:
         self._wait_aux_high()
 
         self.controller.setTxWait(True)
-        data_with_header = self.buil_antena_header() + data
+        data_with_header = self.build_antena_header() + data
         self.ser.write(data_with_header)
         print(f"{len(data)} bytes sent")
 
