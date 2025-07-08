@@ -2,6 +2,7 @@ backup-sd/
 backup/
 *.gz
 .vscode
+venv/
 
 # ignores zip files
 *.zip
