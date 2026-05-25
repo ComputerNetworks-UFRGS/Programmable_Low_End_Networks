@@ -1,4 +1,4 @@
-## Middle Configuration
+## End Configuration
 
 - pySX127x/ _(saved at /root/ folder)_
 - P4edge-setup _(saved at /usr/sbin/p4edge-setup)_
