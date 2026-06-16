@@ -1,54 +1,91 @@
-# TCC LoRa Programmable Networks Documentation
+# Vegan Internet - LoRa Programmable Networks
 
-This folder contains the documentation required to reproduce the P4Pi setup used in the TCC project.
+This folder contains the documentation and GNU Radio structure used to reproduce the TCC experiment.
 
-The documentation is intentionally organized by stage, so future GNU Radio files, P4 programs, experiments, and scripts can be added later without mixing them with setup notes.
+The project combines BMv2, p4c, GNU Radio, USRP/UHD devices, TAP interfaces, and basic validation tests.
 
-## Recommended reading order
+## Folder Structure
 
-1. [`docs/setup/README.md`](docs/setup/README.md)  
-   Overview of the installation flow.
-
-2. [`docs/setup/01-system-dependencies.md`](docs/setup/01-system-dependencies.md)  
-   Single source of truth for all system packages required by BMv2 and P4C.
-
-3. [`docs/setup/02-source-preparation.md`](docs/setup/02-source-preparation.md)  
-   Clone the P4Pi project, run `cpfiles.sh`, and prepare the BMv2/P4C sources.
-
-4. [`docs/setup/03-build-bmv2-behavioral-model.md`](docs/setup/03-build-bmv2-behavioral-model.md)  
-   Build and install BMv2 / `behavioral-model`, including `simple_switch` and `simple_switch_CLI`.
-
-5. [`docs/setup/04-build-p4c.md`](docs/setup/04-build-p4c.md)  
-   Build and install `p4c`, including `p4c-bm2-ss`.
-
-6. [`docs/validation/01-p4-bmv2-end-to-end-validation.md`](docs/validation/01-p4-bmv2-end-to-end-validation.md)  
-   Validate the setup by compiling a P4 program, running `simple_switch`, and connecting through `simple_switch_CLI`.
-
-7. [`docs/troubleshooting/README.md`](docs/troubleshooting/README.md)  
-   Known errors and fixes found during the setup.
-
-## Reference
-
-A consolidated version is available at:
-
-- [`docs/reference/consolidated-install-guide.md`](docs/reference/consolidated-install-guide.md)
-
-Use the staged documents for execution. Use the consolidated guide only as a quick reference.
-
-## Versions used
-
-| Component | Repository | Commit |
-|---|---|---|
-| BMv2 / behavioral-model | `https://github.com/p4lang/behavioral-model` | `f745e1db5e281d1e30483496c3c0960a8d23c852` |
-| P4C | `https://github.com/p4lang/p4c` | `1576090b74b610e979a3afeafec79d0a2f81a598` |
-| P4Pi project | `https://github.com/ComputerNetworks-UFRGS/Programmable_Low_End_Networks/tree/main/p4pi` | main branch |
-
-## Default project path
-
-The commands assume the following path:
-
-```bash
-export P4PI_DIR="$HOME/p4c/Programmable_Low_End_Networks/p4pi"
+```text
+tcc-lora-programmable-networks/
+│   README.md
+│
+├── docs/
+│   ├── reference/
+│   │   └── consolidated-install-guide.md
+│   │
+│   ├── setup/
+│   │   ├── README.md
+│   │   ├── 01-system-dependencies.md
+│   │   ├── 02-source-preparation.md
+│   │   ├── 03-build-bmv2-behavioral-model.md
+│   │   └── 04-build-p4c.md
+│   │
+│   ├── gnuradio/
+│   │   ├── README.md
+│   │   ├── 01-tap-interface-setup.md
+│   │   ├── 02-gnu-radio-and-usrp.md
+│   │   └── 03-running-the-grc-flowgraphs.md
+│   │
+│   ├── validation/
+│   │   ├── 01-p4-bmv2-end-to-end-validation.md
+│   │   └── 02-basic-execution-tests.md
+│   │
+│   └── troubleshooting/
+│       └── README.md
+│
+└── gnuradio/
+    ├── README.md
+    ├── VM1/
+    │   └── README.md
+    └── VM2/
+        └── README.md
 ```
 
-If the project is cloned somewhere else, update `P4PI_DIR` before running the commands.
+## Recommended Reading Order
+
+1. `docs/setup/README.md`
+2. `docs/setup/01-system-dependencies.md`
+3. `docs/setup/02-source-preparation.md`
+4. `docs/setup/03-build-bmv2-behavioral-model.md`
+5. `docs/setup/04-build-p4c.md`
+6. `docs/gnuradio/README.md`
+7. `docs/gnuradio/03-running-the-grc-flowgraphs.md`
+8. `docs/validation/02-basic-execution-tests.md`
+
+## GNU Radio Flowgraphs
+
+Add the `.grc` files here:
+
+```text
+gnuradio/VM1/vm1-vegan-internet.grc
+gnuradio/VM2/vm2-vegan-internet.grc
+```
+
+## Basic Execution Summary
+
+### VM1
+
+```bash
+sudo ip tuntap add dev tap0 mode tap user $USER
+sudo ip addr add dev tap0 192.168.200.1/24
+sudo ip link set dev tap0 up
+sudo uhd_find_devices
+sudo gnuradio-companion gnuradio/VM1/vm1-vegan-internet.grc
+```
+
+### VM2
+
+```bash
+sudo ip tuntap add dev tap0 mode tap user $USER
+sudo ip addr add dev tap0 192.168.200.2/24
+sudo ip link set dev tap0 up
+sudo uhd_find_devices
+sudo gnuradio-companion gnuradio/VM2/vm2-vegan-internet.grc
+```
+
+After both flowgraphs are running, execute the tests in:
+
+```text
+docs/validation/02-basic-execution-tests.md
+```
